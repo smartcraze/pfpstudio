@@ -5,8 +5,9 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { BackgroundPreset, OutlineState, GradientState, ImageFilterState, ShapeType } from './types'
-import { Move, Palette, Box, Layers, Image as ImageIcon, Sparkles, Wand2, Circle, Square, AppWindow } from 'lucide-react'
+import { Move, Palette, Box, Layers, Image as ImageIcon, Sparkles, Wand2, Circle, Square, AppWindow, Check } from 'lucide-react'
 import { Switch } from '../ui/switch'
+import { DECALS } from './constants'
 import { cn } from '@/lib/utils'
 
 interface EditorControlsProps {
@@ -216,26 +217,81 @@ export function EditorControls({
                             )}
                         </div>
                     ): (
-                         <div className="flex items-center gap-3">
-                             <div className="relative flex-1 h-10 rounded-md border shadow-sm overflow-hidden group hover:border-blue-500 transition-colors">
-                                 <div className="absolute inset-x-0 top-0 bottom-0 pointer-events-none" style={{ background: background.value }} />
-                                 <input type="color" value={background.type === 'solid' ? background.value : '#ffffff'} onChange={handleColorChange} className="opacity-0 w-full h-full cursor-pointer" />
-                                 <div className="absolute inset-0 pointer-events-none flex items-center justify-center text-xs font-medium bg-white/50 opacity-0 group-hover:opacity-100 transition-opacity">Custom Color</div>
+                         <div className="space-y-3">
+                             <div className="flex gap-3 h-10">
+                                 {/* Solid Color Picker */}
+                                 <div className="relative flex-1 rounded-md border shadow-sm overflow-hidden group hover:border-primary transition-colors">
+                                     <div className="absolute inset-x-0 top-0 bottom-0 pointer-events-none" style={{ background: background.type === 'solid' ? background.value : '#fff' }} />
+                                     <input type="color" value={background.type === 'solid' ? background.value : '#ffffff'} onChange={handleColorChange} className="opacity-0 w-full h-full cursor-pointer" />
+                                     <div className="absolute inset-0 pointer-events-none flex items-center justify-center text-xs font-medium bg-white/50 opacity-0 group-hover:opacity-100 transition-opacity">Custom Color</div>
+                                 </div>
                              </div>
                         </div>
                     )}
+                </div>
+
+                {/* 5. Texture Overlay */}
+                <div className="space-y-4 pt-4 border-t">
+                     <Label className="font-semibold">Texture Overlay</Label>
+                     <div className="grid grid-cols-5 gap-2">
+                        {['none', 'noise', 'dots', 'grid', 'lines'].map((t) => (
+                            <button
+                                key={t}
+                                onClick={() => setBackground({...background, texture: t as any ?? 'none'})}
+                                className={cn(
+                                    "aspect-square rounded border flex items-center justify-center text-[10px] font-medium transition-all",
+                                    (background.texture || 'none') === t ? "border-primary bg-primary/5 text-primary" : "text-muted-foreground hover:bg-muted"
+                                )}
+                            >
+                                {t === 'none' && <Box className="w-4 h-4" />}
+                                {t === 'noise' && <Layers className="w-4 h-4 opacity-50" />}
+                                {t === 'dots' && <div className="w-4 h-4 bg-[radial-gradient(circle_at_center,_black_1px,_transparent_0)] bg-[length:4px_4px] opacity-50" />}
+                                {t === 'grid' && <div className="w-4 h-4 border border-black/20" style={{ backgroundImage: 'linear-gradient(black 1px, transparent 1px), linear-gradient(90deg, black 1px, transparent 1px)', backgroundSize: '4px 4px' }} />}
+                                {t === 'lines' && <div className="w-4 h-4" style={{ backgroundImage: 'repeating-linear-gradient(45deg, black 0, black 1px, transparent 0, transparent 4px)' }} />}
+                            </button>
+                        ))}
+                     </div>
+                     {(background.texture && background.texture !== 'none') && (
+                        <div className="space-y-3 animate-in fade-in">
+                            <div className="flex justify-between text-xs"><span>Opacity</span><span>{Math.round((background.textureOpacity || 0.1) * 100)}%</span></div>
+                            <Slider value={[(background.textureOpacity || 0.1) * 100]} onValueChange={([v]) => setBackground({...background, textureOpacity: v/100})} min={0} max={100} step={1} />
+                        </div>
+                     )}
+                </div>
+
+                {/* 6. Decal Overlay */}
+                <div className="space-y-4 pt-4 border-t">
+                     <Label className="font-semibold">Decal Overlay</Label>
+                     <div className="grid grid-cols-5 gap-2">
+                        {DECALS.map((d) => (
+                            <button
+                                key={d.id}
+                                onClick={() => setBackground({...background, decal: d.id, decalOpacity: background.decalOpacity || 0.5 })}
+                                className={cn(
+                                    "aspect-square rounded border flex items-center justify-center text-[10px] font-medium transition-all relative overflow-hidden",
+                                    (background.decal || 'none') === d.id ? "border-primary bg-primary/5 text-primary ring-1 ring-primary" : "text-muted-foreground hover:bg-muted"
+                                )}
+                                title={d.name}
+                            >
+                                {d.id === 'none' ? (
+                                    <Box className="w-4 h-4" />
+                                ) : (
+                                    <img src={d.url} alt={d.name} className="w-full h-full object-contain p-1 opacity-80" />
+                                )}
+                            </button>
+                        ))}
+                     </div>
+                     {(background.decal && background.decal !== 'none') && (
+                        <div className="space-y-3 animate-in fade-in pt-2">
+                            <div className="flex justify-between text-xs"><span>Decal Alpha</span><span>{Math.round((background.decalOpacity || 0.5) * 100)}%</span></div>
+                            <Slider value={[(background.decalOpacity || 0.5) * 100]} onValueChange={([v]) => setBackground({...background, decalOpacity: v/100})} min={0} max={100} step={1} />
+                        </div>
+                     )}
                 </div>
             </TabsContent>
             
             <TabsContent value="image" className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="space-y-6">
-                     <div className="flex items-center justify-between border-b pb-4">
-                        <Label className="flex items-center gap-2 font-semibold">
-                            <Layers className="w-4 h-4" /> Noise Texture
-                        </Label>
-                        <Switch checked={noiseTexture} onCheckedChange={setNoiseTexture} />
-                     </div>
-
                      <div className="space-y-4">
                         <Label className="font-semibold">Filters</Label>
                         

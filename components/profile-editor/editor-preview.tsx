@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Download } from 'lucide-react'
 import { BackgroundPreset, ShapeType, ImageFilterState, OutlineState, GradientState } from './types'
+import { PRESET_BACKGROUNDS, DECALS } from './constants'
 import { cn } from '@/lib/utils'
 import { drawProfileImage } from '@/lib/canvas-utils'
 
@@ -45,17 +46,43 @@ export function EditorPreview({
   useEffect(() => {
     if (!processedImage || !canvasRef.current) return
     
-    // Create new image object to ensure fresh load
-    const img = new Image()
-    img.crossOrigin = 'anonymous'
-    img.src = processedImage
-    
-    // Only draw once image is loaded
-    img.onload = () => {
+    const draw = async () => {
         if (!canvasRef.current) return
+
+        // Load Main Image
+        const img = new Image()
+        img.crossOrigin = 'anonymous'
+        img.src = processedImage
+        await new Promise((resolve) => { img.onload = resolve })
+
+        // Load Background Image if needed
+        let bgImg: HTMLImageElement | undefined
+        if (background.type === 'image') {
+            const bg = new Image()
+            bg.crossOrigin = 'anonymous'
+            bg.src = background.value
+            await new Promise((resolve) => { bg.onload = resolve })
+            bgImg = bg
+        }
+
+        // Load Decal Image if needed
+        let decalImg: HTMLImageElement | undefined
+        // Helper to find decal url
+        const decalId = background.decal || 'none'
+        const decalDef = DECALS.find(d => d.id === decalId)
+        if (decalId !== 'none' && decalDef) {
+             const d = new Image()
+             d.crossOrigin = 'anonymous'
+             d.src = decalDef.url
+             await new Promise((resolve) => { d.onload = resolve; d.onerror = resolve })
+             decalImg = d
+        }
+
         drawProfileImage({
             canvas: canvasRef.current,
             image: img,
+            backgroundImage: bgImg,
+            decalImage: decalImg,
             shape,
             background,
             gradient,
@@ -72,40 +99,64 @@ export function EditorPreview({
             shadowIntensity
         })
     }
+
+    draw()
   }, [processedImage, shape, background, gradient, filters, outline, noiseTexture, zoom, rotation, positionX, positionY, borderColor, borderWidth, shadowIntensity])
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!processedImage) return
     
     const canvas = document.createElement('canvas')
     const img = new Image()
     img.crossOrigin = 'anonymous'
     img.src = processedImage
-    
-    img.onload = () => {
-        drawProfileImage({
-            canvas,
-            image: img,
-            shape,
-            background,
-            gradient,
-            filters,
-            outline,
-            noiseTexture,
-            zoom,
-            rotation,
-            positionX,
-            positionY,
-            size: exportSize,
-            borderColor,
-            borderWidth,
-            shadowIntensity
-        })
-        const link = document.createElement('a')
-        link.download = `pfp-maker-${Date.now()}.png`
-        link.href = canvas.toDataURL('image/png')
-        link.click()
+    await new Promise((resolve) => { img.onload = resolve })
+
+    let bgImg: HTMLImageElement | undefined
+    if (background.type === 'image') {
+        const bg = new Image()
+        bg.crossOrigin = 'anonymous'
+        bg.src = background.value
+        await new Promise((resolve) => { bg.onload = resolve })
+        bgImg = bg
     }
+    
+    // Load Decal for Export
+    let decalImg: HTMLImageElement | undefined
+    const decalId = background.decal || 'none'
+    const decalDef = DECALS.find(d => d.id === decalId)
+    if (decalId !== 'none' && decalDef) {
+         const d = new Image()
+         d.crossOrigin = 'anonymous'
+         d.src = decalDef.url
+         await new Promise((resolve) => { d.onload = resolve; d.onerror = resolve })
+         decalImg = d
+    }
+
+    drawProfileImage({
+        canvas,
+        image: img,
+        backgroundImage: bgImg,
+        decalImage: decalImg,
+        shape,
+        background,
+        gradient,
+        filters,
+        outline,
+        noiseTexture,
+        zoom,
+        rotation,
+        positionX,
+        positionY,
+        size: exportSize,
+        borderColor,
+        borderWidth,
+        shadowIntensity
+    })
+    const link = document.createElement('a')
+    link.download = `pfp-maker-${Date.now()}.png`
+    link.href = canvas.toDataURL('image/png')
+    link.click()
   }
 
   return (

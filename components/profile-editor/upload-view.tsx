@@ -75,6 +75,24 @@ export function UploadView({ onUpload }: UploadViewProps) {
                 className="hidden"
             />
             
+            <div className="mt-6 text-center">
+                 <button 
+                    onClick={async () => {
+                        try {
+                            const response = await fetch('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80');
+                            const blob = await response.blob();
+                            const file = new File([blob], "demo-portrait.jpg", { type: "image/jpeg" });
+                             onUpload(file);
+                        } catch (e) {
+                            console.error("Failed to load demo", e);
+                        }
+                    }}
+                    className="text-sm text-primary hover:underline font-medium"
+                 >
+                     No photo? Try with a demo image
+                 </button>
+            </div>
+
             <div className="mt-8 grid grid-cols-3 gap-4 text-center text-xs text-muted-foreground">
                  <div className="flex flex-col items-center gap-2">
                      <Wand2 className="w-4 h-4" />

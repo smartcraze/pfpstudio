@@ -137,11 +137,20 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       setShadowIntensity(0)
   }
 
+  // Ensure texture defaults are present when selecting bg
+  const handleSetSelectedBg = (bg: BackgroundPreset) => {
+      setSelectedBg({
+          texture: 'none',
+          textureOpacity: 0.1,
+          ...bg
+      })
+  }
+
   const value = {
       processedImage, setProcessedImage,
       isProcessing, processImage,
       shape, setShape,
-      selectedBg, setSelectedBg,
+      selectedBg, setSelectedBg: handleSetSelectedBg,
       zoom, setZoom,
       rotation, setRotation,
       positionX, setPositionX,

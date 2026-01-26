@@ -5,7 +5,11 @@ export interface BackgroundPreset {
   id: string
   name: string
   value: string
-  type: 'solid' | 'gradient'
+  type: 'solid' | 'gradient' | 'image'
+  texture?: 'none' | 'noise' | 'dots' | 'grid' | 'lines'
+  textureOpacity?: number
+  decal?: string
+  decalOpacity?: number
 }
 
 export interface ImageFilterState {

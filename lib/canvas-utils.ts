@@ -3,6 +3,8 @@ import { BackgroundPreset, ShapeType, ImageFilterState, OutlineState, GradientSt
 interface DrawOptions {
   canvas: HTMLCanvasElement
   image: HTMLImageElement
+  backgroundImage?: HTMLImageElement
+  decalImage?: HTMLImageElement
   shape: ShapeType
   background: BackgroundPreset
   gradient: GradientState
@@ -35,6 +37,8 @@ const getGradientCoords = (w: number, h: number, angleDeg: number) => {
 export const drawProfileImage = ({
   canvas,
   image,
+  backgroundImage,
+  decalImage,
   shape,
   background,
   gradient,
@@ -106,6 +110,42 @@ export const drawProfileImage = ({
   ctx.clip()
 
   // 3. Draw Background
+  if (background.type === 'image') {
+       // Draw custom background image
+       // Since loading an image inside a synchronous draw function is hard, 
+       // we assume the caller has pre-loaded it or we use a pattern if available.
+       // However, for this implementation, we will try to stick to the pattern of 'value' being a URL
+       // But 'value' here is likely a string URL. We can't synchronously load it.
+       // The 'image' prop passed to this function is the SUBJECT.
+       // To fix this properly, we need to preload the BG image in EditorPreview.
+       // For now, let's skip drawing it here if it's not a color/gradient, 
+       // OR we assume EditorPreview handles drawing the BG canvas underneath.
+       // ACTUALLY: We must draw it here for the download to work.
+       
+       // Quick fix: We can try to get the image from the DOM if it exists, or 
+       // we rely on the fact that if background.type is 'image', the value IS a dataURL or loaded src.
+       // But check below.
+       
+       // Hack for now: We won't draw async images here easily without refactoring 'drawProfileImage' to be async.
+       // Optimally: 'value' should be a pattern context? No.
+       
+       // Let's rely on 'drawProfileImage' being able to get the image element if we pass it.
+       // But we didn't pass a 'backgroundImageElement'.
+       
+       // Only way to make this robust: refactor drawProfileImage to async OR pass loaded BG image.
+       // Let's modify 'drawProfileImage' signature to accept 'backgroundImage?: HTMLImageElement'.
+       // But that touches too many files.
+       
+       // Alternative: For now, if type is 'image', we fill white (fallback)
+       // The user will see white until we implement async drawing.
+       // Let's leave it as is for a moment and focus on the UI part, 
+       // but we need to fix this or the feature is broken.
+       
+       // Let's DO refactor drawProfileImage to be async? No, 'useEffect' in preview uses it sync.
+       
+       // Best path: Pass 'backgroundImageElement' to DrawOptions.
+  }
+  
   if (gradient.enabled) {
     // Custom Gradient Mode
     const coords = getGradientCoords(size, size, gradient.angle)
@@ -117,7 +157,14 @@ export const drawProfileImage = ({
   } else {
     // Preset Mode
     if (background.value !== 'transparent') {
-      if (background.type === 'gradient') {
+      if (background.type === 'image' && backgroundImage) {
+          // Draw custom background image
+          // Cover mode
+          const scale = Math.max(size / backgroundImage.width, size / backgroundImage.height)
+          const x = (size / 2) - (backgroundImage.width / 2) * scale
+          const y = (size / 2) - (backgroundImage.height / 2) * scale
+          ctx.drawImage(backgroundImage, x, y, backgroundImage.width * scale, backgroundImage.height * scale)
+      } else if (background.type === 'gradient') {
           if (background.id.startsWith('grad')) {
               // Simple extraction for presets
               const colors = background.value.match(/#[0-9a-fA-F]{6}/g)
@@ -139,27 +186,89 @@ export const drawProfileImage = ({
     }
   }
 
-  // 3a. Noise Texture (Optional Senior Feature)
-  if (noiseTexture) {
-    ctx.save()
-    // Simple noise generation
-    const noiseSize = 64
-    const noiseCanvas = document.createElement('canvas')
-    noiseCanvas.width = noiseSize
-    noiseCanvas.height = noiseSize
-    const nCtx = noiseCanvas.getContext('2d')
-    if (nCtx) {
-        const idata = nCtx.createImageData(noiseSize, noiseSize)
-        const buffer32 = new Uint32Array(idata.data.buffer)
-        for (let i = 0; i < buffer32.length; i++) {
-             if (Math.random() < 0.5) buffer32[i] = 0xff000000 // Black with alpha set later
+  // 3b. Pattern Overlay
+  if (background.texture && background.texture !== 'none') {
+      ctx.save()
+      const patternCanvas = document.createElement('canvas')
+      const pCtx = patternCanvas.getContext('2d')
+      
+      if (pCtx) {
+        ctx.globalAlpha = background.textureOpacity || 0.1
+        
+        if (background.texture === 'dots') {
+             patternCanvas.width = 20
+             patternCanvas.height = 20
+             pCtx.fillStyle = '#000000'
+             pCtx.beginPath()
+             pCtx.arc(2, 2, 1, 0, Math.PI * 2)
+             pCtx.fill()
+             const pattern = ctx.createPattern(patternCanvas, 'repeat')
+             if (pattern) {
+                 ctx.fillStyle = pattern
+                 ctx.fillRect(0, 0, size, size)
+             }
+        } else if (background.texture === 'grid') {
+            patternCanvas.width = 40
+            patternCanvas.height = 40
+            pCtx.strokeStyle = '#000000'
+            pCtx.lineWidth = 1
+            pCtx.beginPath()
+            pCtx.moveTo(0, 0)
+            pCtx.lineTo(40, 0)
+            pCtx.moveTo(0, 0)
+            pCtx.lineTo(0, 40)
+            pCtx.stroke()
+            const pattern = ctx.createPattern(patternCanvas, 'repeat')
+             if (pattern) {
+                 ctx.fillStyle = pattern
+                 ctx.fillRect(0, 0, size, size)
+             }
+        } else if (background.texture === 'lines') {
+            patternCanvas.width = 20
+            patternCanvas.height = 20
+            pCtx.strokeStyle = '#000000'
+            pCtx.lineWidth = 1
+            pCtx.beginPath()
+            pCtx.moveTo(0, 20)
+            pCtx.lineTo(20, 0)
+            pCtx.stroke()
+            const pattern = ctx.createPattern(patternCanvas, 'repeat')
+             if (pattern) {
+                 ctx.fillStyle = pattern
+                 ctx.fillRect(0, 0, size, size)
+             }
+        } else if (background.texture === 'noise') {
+            const noiseSize = 64
+            const noiseCanvas = document.createElement('canvas')
+            noiseCanvas.width = noiseSize
+            noiseCanvas.height = noiseSize
+            const nCtx = noiseCanvas.getContext('2d')
+            if (nCtx) {
+                const idata = nCtx.createImageData(noiseSize, noiseSize)
+                const buffer32 = new Uint32Array(idata.data.buffer)
+                for (let i = 0; i < buffer32.length; i++) {
+                    if (Math.random() < 0.5) buffer32[i] = 0xff000000
+                }
+                nCtx.putImageData(idata, 0, 0)
+                const pattern = ctx.createPattern(noiseCanvas, 'repeat')
+                if (pattern) {
+                    ctx.fillStyle = pattern
+                    ctx.fillRect(0, 0, size, size)
+                }
+            }
         }
-        nCtx.putImageData(idata, 0, 0)
-        ctx.globalAlpha = 0.05
-        ctx.fillStyle = ctx.createPattern(noiseCanvas, 'repeat') || ''
-        ctx.fillRect(0, 0, size, size)
-    }
-    ctx.restore()
+        
+        ctx.globalAlpha = 1.0
+      }
+      ctx.restore()
+  }
+
+  // 3c. Decal Overlay
+  if (background.decal && background.decal !== 'none' && decalImage) {
+      ctx.save()
+      ctx.globalAlpha = background.decalOpacity || 1.0
+      ctx.drawImage(decalImage, 0, 0, size, size)
+      ctx.restore()
   }
 
   // 4. Draw Image (Subject)

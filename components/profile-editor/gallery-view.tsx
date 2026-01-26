@@ -53,7 +53,7 @@ export function GalleryView({ processedImage, shape, setShape, onSelectBackgroun
                 className="group cursor-pointer space-y-3"
                 onClick={() => onSelectBackground(bg)}
                 >
-                <div className="relative aspect-square bg-white border rounded-xl overflow-hidden shadow-sm group-hover:shadow-xl group-hover:-translate-y-1 transition-all duration-300">
+                <div className="relative aspect-square bg-white shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)] rounded-xl overflow-hidden shadow-sm group-hover:shadow-xl group-hover:-translate-y-1 transition-all duration-300">
                         <div className="absolute inset-0 flex items-center justify-center p-4">
                             <div 
                             className={cn(

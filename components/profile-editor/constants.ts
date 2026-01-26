@@ -26,6 +26,14 @@ export const PRESET_BACKGROUNDS: BackgroundPreset[] = [
   { id: 'grad-midnight', name: 'Neon Night', value: 'linear-gradient(135deg, #0f172a 0%, #334155 100%)', type: 'gradient' },
 ]
 
+export const DECALS = [
+  { id: 'none', name: 'None', url: '' },
+  { id: 'decal-1', name: 'Organic 1', url: '/decals-1.svg' },
+  { id: 'decal-2', name: 'Organic 2', url: '/decals-2.svg' },
+  { id: 'globe', name: 'Globe', url: '/globe.svg' },
+  { id: 'window', name: 'Window', url: '/window.svg' },
+]
+
 export const DEFAULT_FILTERS: ImageFilterState = {
   brightness: 100,
   contrast: 100,
