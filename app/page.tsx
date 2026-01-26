@@ -5,6 +5,8 @@ import { UploadView } from '@/components/profile-editor/upload-view'
 import { ProcessingView } from '@/components/profile-editor/processing-view'
 import { CropView } from '@/components/profile-editor/crop-view'
 import { useProfile } from '@/lib/profile-context'
+import { HeroScrollDemo } from '@/components/HeroScroll'
+import { TextHoverEffectDemo } from '@/components/TextHover'
 
 export default function Home() {
   const { processImage, isProcessing } = useProfile()
@@ -44,7 +46,9 @@ export default function Home() {
        <div className="container mx-auto py-8 px-4 flex-1 flex flex-col">
          <UploadView onUpload={handleUpload} />
        </div>
-       
+
+       <HeroScrollDemo/>       
+       <TextHoverEffectDemo/>
        <footer className="border-t py-6 bg-muted/30">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} Profile Picture AI. All rights reserved.</p>
