@@ -4,7 +4,7 @@ import React from 'react'
 import { Navbar } from '@/components/Navbar'
 import { HeroScrollDemo } from '@/components/HeroScroll'
 import { TextHoverEffectDemo } from '@/components/TextHover'
-import { IconWand, IconDownload, IconPalette, IconShare, IconCloudUpload, IconEdit, IconPhoto } from '@tabler/icons-react'
+import { IconWand, IconDownload, IconPalette, IconShare, IconCloudUpload } from '@tabler/icons-react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { Spotlight } from '@/components/ui/Spotlight'
@@ -14,8 +14,12 @@ export default function Home() {
     <main className="min-h-screen bg-background text-foreground flex flex-col overflow-x-hidden selection:bg-primary/20">
        <Navbar />
        
-       <div className="fixed inset-0 z-[-1] bg-white dark:bg-black/[0.96]">
-         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+       <div className="fixed inset-0 z-[-1] bg-white dark:bg-black/[0.96] antialiased">
+         <div className={cn(
+           "pointer-events-none absolute inset-0 [background-size:40px_40px] select-none",
+           "[background-image:linear-gradient(to_right,#e5e5e5_1px,transparent_1px),linear-gradient(to_bottom,#e5e5e5_1px,transparent_1px)]",
+           "dark:[background-image:linear-gradient(to_right,#171717_1px,transparent_1px),linear-gradient(to_bottom,#171717_1px,transparent_1px)]"
+         )} />
        </div>
 
        {/* Hero Section with Spotlight */}
@@ -42,9 +46,6 @@ export default function Home() {
               </FadeIn>
 
               <div className="flex flex-col md:flex-row justify-center items-start gap-8 relative max-w-5xl mx-auto">
-                    {/* Connecting Line (Desktop) */}
-                    <div className="hidden md:block absolute top-12 left-[10%] right-[10%] h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent border-t border-dashed border-primary/30" />
-
                     <StepCard 
                         number="01"
                         title="Upload"
@@ -52,29 +53,39 @@ export default function Home() {
                         icon={<IconCloudUpload className="w-8 h-8" />}
                         delay={0.1}
                     />
+                     {/* Connector Line (Desktop) */}
+                    <div className="hidden md:block pt-12 flex-1 relative">
+                        <div className="h-[2px] w-full bg-gradient-to-r from-border to-border via-primary/50" />
+                    </div>
+
                     <StepCard 
                         number="02"
-                        title="Customize"
-                        description="Choose a pro template, adjust colors, and remove background instantly."
-                        icon={<IconEdit className="w-8 h-8" />}
+                        title="Style"
+                        description="Choose from 50+ backdrops, gradients, and decal stickers."
+                        icon={<IconPalette className="w-8 h-8" />}
                         delay={0.2}
                     />
+                    
+                    <div className="hidden md:block pt-12 flex-1 relative">
+                        <div className="h-[2px] w-full bg-gradient-to-r from-border to-border via-primary/50" />
+                    </div>
+
                     <StepCard 
                         number="03"
-                        title="Download"
-                        description="Export your new profile picture in 4K resolution, ready for any platform."
-                        icon={<IconPhoto className="w-8 h-8" />}
+                        title="Export"
+                        description="Download instantly in high-resolution suitable for any social platform."
+                        icon={<IconDownload className="w-8 h-8" />}
                         delay={0.3}
                     />
               </div>
           </div>
        </section>
-       
+
        {/* Features Grid */}
-       <section className="py-24 container mx-auto px-4">
-        <div className="max-w-6xl mx-auto">
+       <section id="features" className="py-24">
+        <div className="container mx-auto px-4">
             <FadeIn>
-                <div className="mb-16">
+                <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Everything You Need</h2>
                     <p className="text-muted-foreground text-lg">Professional tools, zero learning curve.</p>
                 </div>
@@ -110,7 +121,7 @@ export default function Home() {
        </section>
  
        {/* Footer / Branding */}
-       <section className="py-12 bg-background">
+       <section className="py-12">
          <TextHoverEffectDemo/>
        </section>
 
