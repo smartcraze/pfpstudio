@@ -40,7 +40,7 @@ export function EditorView(props: EditorViewProps) {
         </div>
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
-            <div className="space-y-8">
+            <div className="space-y-8 md:sticky md:top-8 order-1 md:order-1">
                 <EditorPreview 
                     processedImage={props.processedImage}
                     shape={props.shape}

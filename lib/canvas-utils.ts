@@ -34,6 +34,30 @@ const getGradientCoords = (w: number, h: number, angleDeg: number) => {
   }
 }
 
+// Helper to Tint an Image (for decals)
+const createTintedImage = (
+    image: HTMLImageElement,
+    color: string,
+    width: number,
+    height: number
+  ): HTMLCanvasElement => {
+    const canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return canvas
+  
+    // 1. Draw the image (white decal)
+    ctx.drawImage(image, 0, 0, width, height)
+  
+    // 2. Composite Source-In to tint
+    ctx.globalCompositeOperation = 'source-in'
+    ctx.fillStyle = color
+    ctx.fillRect(0, 0, width, height)
+  
+    return canvas
+  }
+
 export const drawProfileImage = ({
   canvas,
   image,
@@ -194,11 +218,12 @@ export const drawProfileImage = ({
       
       if (pCtx) {
         ctx.globalAlpha = background.textureOpacity || 0.1
+        const textureColor = background.textureColor || '#000000'
         
         if (background.texture === 'dots') {
              patternCanvas.width = 20
              patternCanvas.height = 20
-             pCtx.fillStyle = '#000000'
+             pCtx.fillStyle = textureColor
              pCtx.beginPath()
              pCtx.arc(2, 2, 1, 0, Math.PI * 2)
              pCtx.fill()
@@ -210,7 +235,7 @@ export const drawProfileImage = ({
         } else if (background.texture === 'grid') {
             patternCanvas.width = 40
             patternCanvas.height = 40
-            pCtx.strokeStyle = '#000000'
+            pCtx.strokeStyle = textureColor
             pCtx.lineWidth = 1
             pCtx.beginPath()
             pCtx.moveTo(0, 0)
@@ -226,7 +251,7 @@ export const drawProfileImage = ({
         } else if (background.texture === 'lines') {
             patternCanvas.width = 20
             patternCanvas.height = 20
-            pCtx.strokeStyle = '#000000'
+            pCtx.strokeStyle = textureColor
             pCtx.lineWidth = 1
             pCtx.beginPath()
             pCtx.moveTo(0, 20)
@@ -243,11 +268,20 @@ export const drawProfileImage = ({
             noiseCanvas.width = noiseSize
             noiseCanvas.height = noiseSize
             const nCtx = noiseCanvas.getContext('2d')
+            // Convert Hex to RGB for noise
+            const hex = textureColor.replace('#', '')
+            const r = parseInt(hex.substring(0, 2), 16) || 0
+            const g = parseInt(hex.substring(2, 4), 16) || 0
+            const b = parseInt(hex.substring(4, 6), 16) || 0
+            
             if (nCtx) {
                 const idata = nCtx.createImageData(noiseSize, noiseSize)
                 const buffer32 = new Uint32Array(idata.data.buffer)
+                // Color for noise
+                const colorVal = (255 << 24) | (b << 16) | (g << 8) | r
+
                 for (let i = 0; i < buffer32.length; i++) {
-                    if (Math.random() < 0.5) buffer32[i] = 0xff000000
+                    if (Math.random() < 0.5) buffer32[i] = colorVal
                 }
                 nCtx.putImageData(idata, 0, 0)
                 const pattern = ctx.createPattern(noiseCanvas, 'repeat')
@@ -267,7 +301,14 @@ export const drawProfileImage = ({
   if (background.decal && background.decal !== 'none' && decalImage) {
       ctx.save()
       ctx.globalAlpha = background.decalOpacity || 1.0
-      ctx.drawImage(decalImage, 0, 0, size, size)
+      
+      if (background.decalColor) {
+           const tinted = createTintedImage(decalImage, background.decalColor, size, size)
+           ctx.drawImage(tinted, 0, 0, size, size)
+      } else {
+           ctx.drawImage(decalImage, 0, 0, size, size)
+      }
+      
       ctx.restore()
   }
 

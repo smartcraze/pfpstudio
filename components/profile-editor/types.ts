@@ -8,8 +8,10 @@ export interface BackgroundPreset {
   type: 'solid' | 'gradient' | 'image'
   texture?: 'none' | 'noise' | 'dots' | 'grid' | 'lines'
   textureOpacity?: number
+  textureColor?: string
   decal?: string
   decalOpacity?: number
+  decalColor?: string
 }
 
 export interface ImageFilterState {

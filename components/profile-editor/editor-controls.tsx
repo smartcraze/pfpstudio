@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { BackgroundPreset, OutlineState, GradientState, ImageFilterState, ShapeType } from './types'
-import { Move, Palette, Box, Layers, Image as ImageIcon, Sparkles, Wand2, Circle, Square, AppWindow, Check } from 'lucide-react'
+import { Move, Palette, Box, Layers, Image as ImageIcon, Sparkles, Wand2, Circle, Square, AppWindow, Check, X } from 'lucide-react'
 import { Switch } from '../ui/switch'
 import { PRESET_BACKGROUNDS, DECALS } from './constants'
 import { cn } from '@/lib/utils'
@@ -269,9 +269,27 @@ export function EditorControls({
                         ))}
                      </div>
                      {(background.texture && background.texture !== 'none') && (
-                        <div className="space-y-3 animate-in fade-in">
-                            <div className="flex justify-between text-xs"><span>Opacity</span><span>{Math.round((background.textureOpacity || 0.1) * 100)}%</span></div>
-                            <Slider value={[(background.textureOpacity || 0.1) * 100]} onValueChange={([v]) => setBackground({...background, textureOpacity: v/100})} min={0} max={100} step={1} />
+                        <div className="space-y-4 animate-in fade-in pt-3">
+                             {/* Texture Color */}
+                             <div className="flex items-center justify-between">
+                                 <span className="text-xs font-medium">Pattern Color</span>
+                                 <div className="flex items-center gap-2">
+                                     <div className="relative w-6 h-6 rounded-full overflow-hidden border border-input shadow-sm">
+                                         <input 
+                                            type="color" 
+                                            value={background.textureColor || '#000000'} 
+                                            onChange={(e) => setBackground({...background, textureColor: e.target.value})} 
+                                            className="absolute inset-0 w-[150%] h-[150%] -translate-x-1/4 -translate-y-1/4 p-0 cursor-pointer border-0" 
+                                          />
+                                     </div>
+                                 </div>
+                             </div>
+
+                             {/* Opacity */}
+                             <div className="space-y-3">
+                                 <div className="flex justify-between text-xs"><span>Opacity</span><span>{Math.round((background.textureOpacity || 0.1) * 100)}%</span></div>
+                                 <Slider value={[(background.textureOpacity || 0.1) * 100]} onValueChange={([v]) => setBackground({...background, textureOpacity: v/100})} min={0} max={100} step={1} />
+                             </div>
                         </div>
                      )}
                 </div>
@@ -283,7 +301,7 @@ export function EditorControls({
                         {DECALS.map((d) => (
                             <button
                                 key={d.id}
-                                onClick={() => setBackground({...background, decal: d.id, decalOpacity: background.decalOpacity || 0.5 })}
+                                onClick={() => setBackground({...background, decal: d.id, decalOpacity: background.decalOpacity || 0.5, decalColor: undefined })}
                                 className={cn(
                                     "aspect-square rounded border flex items-center justify-center text-[10px] font-medium transition-all relative overflow-hidden",
                                     (background.decal || 'none') === d.id ? "border-primary bg-primary/5 text-primary ring-1 ring-primary" : "text-muted-foreground hover:bg-muted"
@@ -299,9 +317,38 @@ export function EditorControls({
                         ))}
                      </div>
                      {(background.decal && background.decal !== 'none') && (
-                        <div className="space-y-3 animate-in fade-in pt-2">
-                            <div className="flex justify-between text-xs"><span>Decal Alpha</span><span>{Math.round((background.decalOpacity || 0.5) * 100)}%</span></div>
-                            <Slider value={[(background.decalOpacity || 0.5) * 100]} onValueChange={([v]) => setBackground({...background, decalOpacity: v/100})} min={0} max={100} step={1} />
+                        <div className="space-y-4 animate-in fade-in pt-3">
+                             {/* Decal Color */}
+                             <div className="flex items-center justify-between">
+                                 <span className="text-xs font-medium">Decal Color</span>
+                                 <div className="flex items-center gap-2">
+                                      {/* Reset Button (Default White) */}
+                                      {background.decalColor && (
+                                         <Button 
+                                            variant="ghost" 
+                                            size="sm" 
+                                            className="h-6 w-6 p-0" 
+                                            onClick={() => setBackground({...background, decalColor: undefined})}
+                                            title="Reset to original color"
+                                         >
+                                            <X className="w-3 h-3" />
+                                         </Button>
+                                      )}
+                                     <div className="relative w-6 h-6 rounded-full overflow-hidden border border-input shadow-sm">
+                                         <input 
+                                            type="color" 
+                                            value={background.decalColor || '#ffffff'} 
+                                            onChange={(e) => setBackground({...background, decalColor: e.target.value})} 
+                                            className="absolute inset-0 w-[150%] h-[150%] -translate-x-1/4 -translate-y-1/4 p-0 cursor-pointer border-0" 
+                                          />
+                                     </div>
+                                 </div>
+                             </div>
+
+                            <div className="space-y-3">
+                                <div className="flex justify-between text-xs"><span>Decal Alpha</span><span>{Math.round((background.decalOpacity || 0.5) * 100)}%</span></div>
+                                <Slider value={[(background.decalOpacity || 0.5) * 100]} onValueChange={([v]) => setBackground({...background, decalOpacity: v/100})} min={0} max={100} step={1} />
+                            </div>
                         </div>
                      )}
                 </div>
