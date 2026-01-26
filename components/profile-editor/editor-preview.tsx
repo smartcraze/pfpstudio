@@ -119,7 +119,7 @@ export function EditorPreview({
             />
         </div>
         <div className="mt-6 flex gap-4">
-            <Button size="lg" onClick={handleDownload} className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20">
+            <Button size="lg" onClick={handleDownload} className="shadow-lg shadow-primary/20">
                 <Download className="w-4 h-4 mr-2" /> Download {exportSize}px PNG
             </Button>
         </div>

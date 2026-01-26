@@ -19,7 +19,7 @@ export function ProcessingView({ progress }: ProcessingViewProps) {
                     fill="none" 
                     stroke="currentColor" 
                     strokeWidth="8" 
-                    className="text-blue-600 transition-all duration-300 ease-out"
+                    className="text-primary transition-all duration-300 ease-out"
                     strokeDasharray={`${progress * 2.89} 289`}
                     strokeLinecap="round"
                   />

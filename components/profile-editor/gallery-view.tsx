@@ -25,7 +25,7 @@ export function GalleryView({ processedImage, shape, setShape, onSelectBackgroun
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="w-full max-w-[1600px] mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="text-center space-y-4">
             <h1 className="text-3xl font-bold">Pick your perfect look</h1>
             <p className="text-muted-foreground">We've removed the background. Now select a style to customize.</p>
@@ -46,7 +46,7 @@ export function GalleryView({ processedImage, shape, setShape, onSelectBackgroun
             </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {PRESET_BACKGROUNDS.map((bg) => (
                 <div 
                 key={bg.id} 
@@ -74,8 +74,8 @@ export function GalleryView({ processedImage, shape, setShape, onSelectBackgroun
                             </div>
                         </div>
                         
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                            <div className="opacity-0 group-hover:opacity-100 bg-white/90 backdrop-blur text-xs font-semibold px-3 py-1 rounded-full shadow-sm transform translate-y-2 group-hover:translate-y-0 transition-all">
+                        <div className="absolute inset-0 bg-transparent group-hover:bg-foreground/10 transition-colors flex items-center justify-center">
+                            <div className="opacity-0 group-hover:opacity-100 bg-background/90 backdrop-blur text-xs font-semibold px-3 py-1 rounded-full shadow-sm transform translate-y-2 group-hover:translate-y-0 transition-all text-foreground">
                                 Edit / Download
                             </div>
                         </div>
