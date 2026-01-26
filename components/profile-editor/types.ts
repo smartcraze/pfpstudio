@@ -8,9 +8,21 @@ export interface BackgroundPreset {
   type: 'solid' | 'gradient'
 }
 
-export interface EditorState {
-  zoom: number
-  rotation: number
-  positionX: number
-  positionY: number
+export interface ImageFilterState {
+  brightness: number
+  contrast: number
+  saturation: number
+  grayscale: number
+}
+
+export interface OutlineState {
+  color: string
+  width: number
+}
+
+export interface GradientState {
+  enabled: boolean
+  color1: string
+  color2: string
+  angle: number
 }

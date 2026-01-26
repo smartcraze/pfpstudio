@@ -6,8 +6,8 @@ import { UploadView } from './upload-view'
 import { ProcessingView } from './processing-view'
 import { GalleryView } from './gallery-view'
 import { EditorView } from './editor-view'
-import { PRESET_BACKGROUNDS } from './constants'
-import { BackgroundPreset, ShapeType, ViewState } from './types'
+import { PRESET_BACKGROUNDS, DEFAULT_FILTERS, DEFAULT_OUTLINE, DEFAULT_GRADIENT } from './constants'
+import { BackgroundPreset, ShapeType, ViewState, ImageFilterState, OutlineState, GradientState } from './types'
 
 interface ProfileEditorProps {
   onImageUpload: (file: File) => void
@@ -36,6 +36,12 @@ export default function ProfileEditor({ onImageUpload }: ProfileEditorProps) {
   const [borderColor, setBorderColor] = useState('#ffffff')
   const [borderWidth, setBorderWidth] = useState(0)
   const [shadowIntensity, setShadowIntensity] = useState(0)
+
+  // Advanced State
+  const [filters, setFilters] = useState<ImageFilterState>(DEFAULT_FILTERS)
+  const [outline, setOutline] = useState<OutlineState>(DEFAULT_OUTLINE)
+  const [gradient, setGradient] = useState<GradientState>(DEFAULT_GRADIENT)
+  const [noiseTexture, setNoiseTexture] = useState(false)
 
   const processUpload = async (file: File) => {
     setView('processing')
@@ -116,6 +122,10 @@ export default function ProfileEditor({ onImageUpload }: ProfileEditorProps) {
         borderColor={borderColor} setBorderColor={setBorderColor}
         borderWidth={borderWidth} setBorderWidth={setBorderWidth}
         shadowIntensity={shadowIntensity} setShadowIntensity={setShadowIntensity}
+        filters={filters} setFilters={setFilters}
+        outline={outline} setOutline={setOutline}
+        gradient={gradient} setGradient={setGradient}
+        noiseTexture={noiseTexture} setNoiseTexture={setNoiseTexture}
     />
   )
 

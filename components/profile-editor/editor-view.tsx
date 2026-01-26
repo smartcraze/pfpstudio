@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
-import { BackgroundPreset, ShapeType } from './types'
+import { BackgroundPreset, ShapeType, ImageFilterState, OutlineState, GradientState } from './types'
 import { EditorControls } from './editor-controls'
 import { EditorPreview } from './editor-preview'
 
@@ -20,6 +20,11 @@ interface EditorViewProps {
   borderColor: string; setBorderColor: (v: string) => void
   borderWidth: number; setBorderWidth: (v: number) => void
   shadowIntensity: number; setShadowIntensity: (v: number) => void
+
+  filters: ImageFilterState; setFilters: (v: ImageFilterState) => void
+  outline: OutlineState; setOutline: (v: OutlineState) => void
+  gradient: GradientState; setGradient: (v: GradientState) => void
+  noiseTexture: boolean; setNoiseTexture: (v: boolean) => void
 }
 
 export function EditorView(props: EditorViewProps) {
@@ -45,6 +50,10 @@ export function EditorView(props: EditorViewProps) {
                 borderColor={props.borderColor}
                 borderWidth={props.borderWidth}
                 shadowIntensity={props.shadowIntensity}
+                filters={props.filters}
+                outline={props.outline}
+                gradient={props.gradient}
+                noiseTexture={props.noiseTexture}
             />
 
             <div className="space-y-8">
@@ -58,6 +67,10 @@ export function EditorView(props: EditorViewProps) {
                     borderWidth={props.borderWidth} setBorderWidth={props.setBorderWidth}
                     shadowIntensity={props.shadowIntensity} setShadowIntensity={props.setShadowIntensity}
                     background={props.background} setBackground={props.setBackground}
+                    filters={props.filters} setFilters={props.setFilters}
+                    outline={props.outline} setOutline={props.setOutline}
+                    gradient={props.gradient} setGradient={props.setGradient}
+                    noiseTexture={props.noiseTexture} setNoiseTexture={props.setNoiseTexture}
                 />
             </div>
         </div>

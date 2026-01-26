@@ -1,4 +1,4 @@
-import { BackgroundPreset } from './types'
+import { BackgroundPreset, OutlineState, GradientState, ImageFilterState } from './types'
 
 export const PRESET_BACKGROUNDS: BackgroundPreset[] = [
   { id: 'transparent', name: 'Transparent', value: 'transparent', type: 'solid' },
@@ -22,4 +22,25 @@ export const PRESET_BACKGROUNDS: BackgroundPreset[] = [
   { id: 'grad-purple', name: 'Royal', value: 'linear-gradient(135deg, #c084fc 0%, #a855f7 100%)', type: 'gradient' },
   { id: 'grad-sunset', name: 'Sunset', value: 'linear-gradient(135deg, #fba74e 0%, #fe7c60 100%)', type: 'gradient' },
   { id: 'grad-teal', name: 'Tropical', value: 'linear-gradient(135deg, #2dd4bf 0%, #0d9488 100%)', type: 'gradient' },
+  { id: 'grad-berry', name: 'Berry', value: 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)', type: 'gradient' },
+  { id: 'grad-midnight', name: 'Neon Night', value: 'linear-gradient(135deg, #0f172a 0%, #334155 100%)', type: 'gradient' },
 ]
+
+export const DEFAULT_FILTERS: ImageFilterState = {
+  brightness: 100,
+  contrast: 100,
+  saturation: 100,
+  grayscale: 0
+}
+
+export const DEFAULT_OUTLINE: OutlineState = {
+  color: '#ffffff',
+  width: 0
+}
+
+export const DEFAULT_GRADIENT: GradientState = {
+  enabled: false,
+  color1: '#6366f1',
+  color2: '#a855f7',
+  angle: 135
+}
