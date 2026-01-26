@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎨 Animated Profile Creator
 
-## Getting Started
+A fullstack web application built with Next.js that allows users to create stunning animated profile pictures for social media platforms like Google profiles, LinkedIn, and more.
 
-First, run the development server:
+## ✨ Features
 
+- 📸 **Image Upload**: Upload your profile picture with drag & drop support
+- 🎯 **Background Removal**: Remove backgrounds with one click (client-side processing + API integration ready)
+- 🔄 **Shape Selection**: Choose between circle and square profiles
+- 🎭 **Animation Templates**: 6 different animation styles:
+  - Pulse Effect
+  - Bounce Animation
+  - Spin Rotation
+  - Glow Effect
+  - Rainbow Border
+  - Wave Distortion
+- 🎨 **Customization Options**:
+  - Zoom control (50% - 200%)
+  - Rotation (-180° to 180°)
+  - Position adjustment (X & Y axis)
+  - Background color picker
+  - 16 preset colors + custom colors
+- 💾 **Export Options**:
+  - Download as PNG (static)
+  - Download as GIF (animated)
+- 📱 **Responsive Design**: Works perfectly on desktop and mobile
+- 🌙 **Dark Mode**: Full dark mode support
+
+## 🚀 Tech Stack
+
+- **Framework**: Next.js 16.1.4 with App Router
+- **Runtime**: Bun (Package Manager & Runtime)
+- **Styling**: Tailwind CSS + shadcn/ui components
+- **Image Processing**: HTML5 Canvas, Sharp
+- **Animations**: Framer Motion, CSS animations
+- **GIF Generation**: gif.js
+- **UI Components**: Radix UI primitives
+- **TypeScript**: Full type safety
+
+## 🛠️ Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <your-repo-url>
+   cd animated-profile
+   ```
+
+2. **Install dependencies using Bun**
+   ```bash
+   bun install
+   ```
+
+3. **Run the development server**
+   ```bash
+   bun run dev
+   ```
+
+4. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## 🎯 How to Use
+
+1. **Upload Your Image**: Click "Choose Image" to upload your profile picture
+2. **Remove Background**: Click "Remove Background" to automatically remove the background
+3. **Choose Shape**: Select circle or square format
+4. **Adjust Position**: Use the sliders to adjust zoom, rotation, and position
+5. **Select Animation**: Choose from 6 different animation styles
+6. **Customize Colors**: Pick background colors from presets or use custom colors
+7. **Download**: Export as PNG (static) or GIF (animated)
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+bun run build
+vercel deploy
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📄 License
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This project is licensed under the MIT License.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Made with ❤️ using Next.js, Bun & shadcn/ui
