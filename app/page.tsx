@@ -1,59 +1,171 @@
 'use client'
 
-import { useState } from 'react'
-import { UploadView } from '@/components/profile-editor/upload-view'
-import { ProcessingView } from '@/components/profile-editor/processing-view'
-import { CropView } from '@/components/profile-editor/crop-view'
-import { useProfile } from '@/lib/profile-context'
+import React from 'react'
+import { Navbar } from '@/components/Navbar'
 import { HeroScrollDemo } from '@/components/HeroScroll'
 import { TextHoverEffectDemo } from '@/components/TextHover'
+import { IconWand, IconDownload, IconPalette, IconShare, IconCloudUpload, IconEdit, IconPhoto } from '@tabler/icons-react'
+import { motion } from 'framer-motion'
+import { cn } from '@/lib/utils'
+import { Spotlight } from '@/components/ui/Spotlight'
 
 export default function Home() {
-  const { processImage, isProcessing } = useProfile()
-  const [imageToCrop, setImageToCrop] = useState<string | null>(null)
-
-  const handleUpload = (file: File) => {
-    const reader = new FileReader()
-    reader.addEventListener('load', () => {
-      setImageToCrop(reader.result?.toString() || null)
-    })
-    reader.readAsDataURL(file)
-  }
-
-  const handleCropComplete = (croppedFile: File) => {
-    setImageToCrop(null)
-    processImage(croppedFile)
-  }
-
-  if (isProcessing) {
-     return (
-        <main className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center">
-             <ProcessingView progress={66} />
-        </main>
-     )
-  }
-
   return (
-    <main className="min-h-screen bg-background text-foreground flex flex-col">
-       {imageToCrop && (
-         <CropView 
-            imageSrc={imageToCrop} 
-            onCancel={() => setImageToCrop(null)}
-            onCropComplete={handleCropComplete}
-         />
-       )}
+    <main className="min-h-screen bg-background text-foreground flex flex-col overflow-x-hidden selection:bg-primary/20">
+       <Navbar />
        
-       <div className="container mx-auto py-8 px-4 flex-1 flex flex-col">
-         <UploadView onUpload={handleUpload} />
+       <div className="fixed inset-0 z-[-1] bg-white dark:bg-black/[0.96]">
+         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
        </div>
 
-       <HeroScrollDemo/>       
-       <TextHoverEffectDemo/>
-       <footer className="border-t py-6 bg-muted/30">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Profile Picture AI. All rights reserved.</p>
+       {/* Hero Section with Spotlight */}
+       <div className="relative pt-20">
+            <Spotlight
+                className="-top-40 left-0 md:-top-20 md:left-60"
+                fill="currentColor"
+            />
+            <HeroScrollDemo />
+       </div>
+
+       {/* How It Works Section */}
+       <section className="py-24 relative overflow-hidden">
+          <div className="absolute inset-0 bg-secondary/30 transform origin-top-left -z-10 h-full w-full skew-y-3" />
+          
+          <div className="container mx-auto px-4">
+              <FadeIn>
+                  <h2 className="text-3xl md:text-5xl font-bold text-center mb-6 tracking-tight">
+                      Zero to Hero in <span className="text-primary">3 Steps</span>
+                  </h2>
+                  <p className="text-lg text-muted-foreground text-center mb-16 max-w-2xl mx-auto">
+                      No sign-up required. Just upload your photo and let our studio tools do the magic.
+                  </p>
+              </FadeIn>
+
+              <div className="flex flex-col md:flex-row justify-center items-start gap-8 relative max-w-5xl mx-auto">
+                    {/* Connecting Line (Desktop) */}
+                    <div className="hidden md:block absolute top-12 left-[10%] right-[10%] h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent border-t border-dashed border-primary/30" />
+
+                    <StepCard 
+                        number="01"
+                        title="Upload"
+                        description="Drag & drop your best selfie. We support PNG, JPG, and WebP."
+                        icon={<IconCloudUpload className="w-8 h-8" />}
+                        delay={0.1}
+                    />
+                    <StepCard 
+                        number="02"
+                        title="Customize"
+                        description="Choose a pro template, adjust colors, and remove background instantly."
+                        icon={<IconEdit className="w-8 h-8" />}
+                        delay={0.2}
+                    />
+                    <StepCard 
+                        number="03"
+                        title="Download"
+                        description="Export your new profile picture in 4K resolution, ready for any platform."
+                        icon={<IconPhoto className="w-8 h-8" />}
+                        delay={0.3}
+                    />
+              </div>
+          </div>
+       </section>
+       
+       {/* Features Grid */}
+       <section className="py-24 container mx-auto px-4">
+        <div className="max-w-6xl mx-auto">
+            <FadeIn>
+                <div className="mb-16">
+                    <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Everything You Need</h2>
+                    <p className="text-muted-foreground text-lg">Professional tools, zero learning curve.</p>
+                </div>
+            </FadeIn>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <FeatureCard 
+                    icon={<IconWand className="w-8 h-8 text-primary" />}
+                    title="AI Removal"
+                    description="Our advanced algorithm detects subjects and removes backgrounds with precision."
+                    delay={0}
+                />
+                <FeatureCard 
+                    icon={<IconPalette className="w-8 h-8 text-primary" />}
+                    title="Smart Themes"
+                    description="One-click presets designed by digital artists for maximum impact."
+                    delay={0.1}
+                />
+                <FeatureCard 
+                    icon={<IconDownload className="w-8 h-8 text-primary" />}
+                    title="4K Export"
+                    description="Get crisp, retina-ready images that look great on any device."
+                    delay={0.2}
+                />
+                <FeatureCard 
+                    icon={<IconShare className="w-8 h-8 text-primary" />}
+                    title="Private & Secure"
+                    description="All processing runs locally in your browser. Your data stays yours."
+                    delay={0.3}
+                />
+            </div>
+        </div>
+       </section>
+ 
+       {/* Footer / Branding */}
+       <section className="py-12 bg-background">
+         <TextHoverEffectDemo/>
+       </section>
+
+       <footer className="border-t py-8 bg-background/50 backdrop-blur-sm">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
+          <p>&copy; {new Date().getFullYear()} PfpStudio. Created for Creators.</p>
+          <div className="flex gap-6">
+            <a href="#" className="hover:text-primary transition-colors">Terms</a>
+            <a href="#" className="hover:text-primary transition-colors">Privacy</a>
+            <a href="#" className="hover:text-primary transition-colors">Twitter</a>
+          </div>
         </div>
       </footer>
     </main>
   )
+}
+
+function FadeIn({ children, delay = 0, className }: { children: React.ReactNode, delay?: number, className?: string }) {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5, delay, ease: "easeOut" }}
+            className={className}
+        >
+            {children}
+        </motion.div>
+    )
+}
+
+function StepCard({ number, title, description, icon, delay }: { number: string, title: string, description: string, icon: React.ReactNode, delay: number }) {
+    return (
+        <FadeIn delay={delay} className="flex flex-col items-center text-center max-w-[280px]">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 flex items-center justify-center mb-6 shadow-sm relative group">
+                 <div className="absolute inset-0 bg-primary/10 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                 <div className="relative text-primary">{icon}</div>
+            </div>
+            <div className="text-xs font-bold text-primary/60 mb-2 uppercase tracking-widest">Step {number}</div>
+            <h3 className="text-2xl font-bold mb-3">{title}</h3>
+            <p className="text-muted-foreground leading-relaxed">{description}</p>
+        </FadeIn>
+    )
+}
+
+function FeatureCard({ icon, title, description, delay }: { icon: React.ReactNode, title: string, description: string, delay: number }) {
+    return (
+        <FadeIn delay={delay}>
+            <div className="h-full flex flex-col p-6 rounded-2xl bg-card border border-border/50 hover:border-primary/30 shadow-sm hover:shadow-lg transition-all duration-300 group">
+                <div className="mb-5 p-3 w-fit rounded-xl bg-secondary group-hover:bg-primary/10 transition-colors">
+                    {icon}
+                </div>
+                <h3 className="text-xl font-bold mb-3">{title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{description}</p>
+            </div>
+        </FadeIn>
+    )
 }

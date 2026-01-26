@@ -109,7 +109,7 @@ export function GalleryView({ processedImage, shape, setShape, onSelectBackgroun
                 className="group cursor-pointer space-y-2"
                 onClick={() => onSelectBackground(bg)}
                 >
-                <div className="relative aspect-square rounded-xl overflow-hidden bg-muted/20 border hover:border-primary transition-all duration-300 hover:shadow-lg">
+                <div className="relative aspect-square rounded-xl overflow-hidden bg-muted/20  hover:border-primary transition-all duration-300 hover:shadow-lg">
                         <div className="absolute inset-0 flex items-center justify-center p-4">
                              <GalleryItem bg={bg} processedImage={processedImage} shape={shape} />
                         </div>

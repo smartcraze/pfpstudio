@@ -60,6 +60,7 @@
 /* Dark mode removed */
 
 @theme inline {
+  --animate-spotlight: spotlight 2s ease 0.75s 1 forwards;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -122,4 +123,28 @@
 .bg-dot-thick-indigo-500 {
   background-image: radial-gradient(#6366f1 2px, transparent 2px);
   background-size: 20px 20px;
+}
+
+@keyframes spotlight {
+  0% {
+    opacity: 0;
+    transform: translate(-72%, -62%) scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -40%) scale(1);
+  }
+}@theme {
+  --animate-spotlight: spotlight 2s ease .75s 1 forwards;
+  
+  @keyframes spotlight {
+    0% {
+      opacity: 0;
+      transform: translate(-72%, -62%) scale(0.5);
+    }
+    100% {
+      opacity: 1;
+      transform: translate(-50%, -40%) scale(1);
+    }
+  }
 }
