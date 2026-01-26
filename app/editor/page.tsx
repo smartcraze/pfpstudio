@@ -9,7 +9,7 @@ export default function EditorPage() {
   const router = useRouter()
   const { 
     processedImage, 
-    shape, 
+    shape, setShape,
     selectedBg, setSelectedBg,
     zoom, setZoom,
     rotation, setRotation,
@@ -37,7 +37,7 @@ export default function EditorPage() {
     <main className="min-h-screen bg-background text-foreground flex flex-col p-4 md:p-8">
         <EditorView 
             processedImage={processedImage}
-            shape={shape}
+            shape={shape} setShape={setShape}
             background={selectedBg}
             setBackground={setSelectedBg}
             onBack={() => router.push('/gallery')}

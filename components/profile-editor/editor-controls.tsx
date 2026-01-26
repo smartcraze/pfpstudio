@@ -4,11 +4,15 @@ import { Slider } from '@/components/ui/slider'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { BackgroundPreset, OutlineState, GradientState, ImageFilterState } from './types'
-import { Move, Palette, Box, Layers, Image as ImageIcon, Sparkles, Wand2 } from 'lucide-react'
+import { BackgroundPreset, OutlineState, GradientState, ImageFilterState, ShapeType } from './types'
+import { Move, Palette, Box, Layers, Image as ImageIcon, Sparkles, Wand2, Circle, Square, AppWindow } from 'lucide-react'
 import { Switch } from '../ui/switch'
+import { cn } from '@/lib/utils'
 
 interface EditorControlsProps {
+  shape: ShapeType
+  setShape: (s: ShapeType) => void
+
   zoom: number
   setZoom: (v: number) => void
   rotation: number
@@ -44,6 +48,7 @@ interface EditorControlsProps {
 }
 
 export function EditorControls({
+  shape, setShape,
   zoom, setZoom,
   rotation, setRotation,
   positionX, setPositionX,
@@ -108,6 +113,27 @@ export function EditorControls({
             </TabsContent>
             
             <TabsContent value="style" className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                <div className="space-y-4 border-b pb-4">
+                    <Label className="font-semibold">Shape</Label>
+                     <div className="flex gap-2">
+                        {[
+                            { id: 'circle', icon: Circle, label: 'Circle' },
+                            { id: 'squircle', icon: AppWindow, label: 'Rounded' },
+                            { id: 'square', icon: Square, label: 'Square' }
+                        ].map((s) => (
+                            <Button
+                                key={s.id}
+                                variant={shape === s.id ? 'default' : 'outline'}
+                                className={cn("flex-1 gap-2", shape === s.id && "bg-primary text-primary-foreground")}
+                                onClick={() => setShape(s.id as ShapeType)}
+                            >
+                                <s.icon className="w-4 h-4" />
+                                <span className="hidden lg:inline">{s.label}</span>
+                            </Button>
+                        ))}
+                     </div>
+                </div>
+
                 {/* 1. Outline (Sticker) */}
                  <div className="space-y-4 border-b pb-4">
                     <div className="flex items-center justify-between">

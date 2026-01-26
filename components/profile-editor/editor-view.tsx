@@ -4,10 +4,12 @@ import { ArrowLeft } from 'lucide-react'
 import { BackgroundPreset, ShapeType, ImageFilterState, OutlineState, GradientState } from './types'
 import { EditorControls } from './editor-controls'
 import { EditorPreview } from './editor-preview'
+import { SocialPreviews } from './social-previews'
 
 interface EditorViewProps {
   processedImage: string | null
   shape: ShapeType
+  setShape: (s: ShapeType) => void
   background: BackgroundPreset
   setBackground: (bg: BackgroundPreset) => void
   onBack: () => void
@@ -38,26 +40,46 @@ export function EditorView(props: EditorViewProps) {
         </div>
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
-            <EditorPreview 
-                processedImage={props.processedImage}
-                shape={props.shape}
-                background={props.background}
-                zoom={props.zoom}
-                rotation={props.rotation}
-                positionX={props.positionX}
-                positionY={props.positionY}
-                exportSize={props.exportSize}
-                borderColor={props.borderColor}
-                borderWidth={props.borderWidth}
-                shadowIntensity={props.shadowIntensity}
-                filters={props.filters}
-                outline={props.outline}
-                gradient={props.gradient}
-                noiseTexture={props.noiseTexture}
-            />
+            <div className="space-y-8">
+                <EditorPreview 
+                    processedImage={props.processedImage}
+                    shape={props.shape}
+                    background={props.background}
+                    zoom={props.zoom}
+                    rotation={props.rotation}
+                    positionX={props.positionX}
+                    positionY={props.positionY}
+                    exportSize={props.exportSize}
+                    borderColor={props.borderColor}
+                    borderWidth={props.borderWidth}
+                    shadowIntensity={props.shadowIntensity}
+                    filters={props.filters}
+                    outline={props.outline}
+                    gradient={props.gradient}
+                    noiseTexture={props.noiseTexture}
+                />
+                
+                <SocialPreviews
+                    processedImage={props.processedImage}
+                    shape={props.shape}
+                    background={props.background}
+                    zoom={props.zoom}
+                    rotation={props.rotation}
+                    positionX={props.positionX}
+                    positionY={props.positionY}
+                    borderColor={props.borderColor}
+                    borderWidth={props.borderWidth}
+                    shadowIntensity={props.shadowIntensity}
+                    filters={props.filters}
+                    outline={props.outline}
+                    gradient={props.gradient}
+                    noiseTexture={props.noiseTexture}
+                />
+            </div>
 
             <div className="space-y-8">
                 <EditorControls 
+                    shape={props.shape} setShape={props.setShape}
                     zoom={props.zoom} setZoom={props.setZoom}
                     rotation={props.rotation} setRotation={props.setRotation}
                     positionX={props.positionX} setPositionX={props.setPositionX}
