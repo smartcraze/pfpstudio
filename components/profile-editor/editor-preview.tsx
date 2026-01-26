@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Download } from 'lucide-react'
 import { BackgroundPreset, ShapeType, ImageFilterState, OutlineState, GradientState } from './types'
-import { PRESET_BACKGROUNDS, DECALS } from './constants'
+import { PRESET_BACKGROUNDS, DECALS, SHADOWS } from './constants'
 import { cn } from '@/lib/utils'
 import { drawProfileImage } from '@/lib/canvas-utils'
 
@@ -61,8 +61,10 @@ export function EditorPreview({
             const bg = new Image()
             bg.crossOrigin = 'anonymous'
             bg.src = background.value
-            await new Promise((resolve) => { bg.onload = resolve })
-            bgImg = bg
+            await new Promise((resolve) => { bg.onload = resolve; bg.onerror = resolve })
+            if (bg.complete && bg.naturalWidth > 0) {
+              bgImg = bg
+            }
         }
 
         // Load Decal Image if needed
@@ -75,7 +77,23 @@ export function EditorPreview({
              d.crossOrigin = 'anonymous'
              d.src = decalDef.url
              await new Promise((resolve) => { d.onload = resolve; d.onerror = resolve })
-             decalImg = d
+             if (d.complete && d.naturalWidth > 0) {
+                decalImg = d
+             }
+        }
+
+        // Load Shadow Image if needed
+        let shadowImg: HTMLImageElement | undefined
+        const shadowId = background.backdropShadow || 'none'
+        const shadowDef = SHADOWS.find(s => s.id === shadowId)
+        if (shadowId !== 'none' && shadowDef) {
+             const s = new Image()
+             s.crossOrigin = 'anonymous'
+             s.src = shadowDef.url
+             await new Promise((resolve) => { s.onload = resolve; s.onerror = resolve })
+             if (s.complete && s.naturalWidth > 0) {
+                shadowImg = s
+             }
         }
 
         drawProfileImage({
@@ -83,6 +101,7 @@ export function EditorPreview({
             image: img,
             backgroundImage: bgImg,
             decalImage: decalImg,
+            shadowImage: shadowImg,
             shape,
             background,
             gradient,
@@ -117,8 +136,8 @@ export function EditorPreview({
         const bg = new Image()
         bg.crossOrigin = 'anonymous'
         bg.src = background.value
-        await new Promise((resolve) => { bg.onload = resolve })
-        bgImg = bg
+        await new Promise((resolve) => { bg.onload = resolve; bg.onerror = resolve })
+        if (bg.complete && bg.naturalWidth > 0) bgImg = bg
     }
     
     // Load Decal for Export
@@ -130,7 +149,19 @@ export function EditorPreview({
          d.crossOrigin = 'anonymous'
          d.src = decalDef.url
          await new Promise((resolve) => { d.onload = resolve; d.onerror = resolve })
-         decalImg = d
+         if (d.complete && d.naturalWidth > 0) decalImg = d
+    }
+
+    // Load Shadow for Export
+    let shadowImg: HTMLImageElement | undefined
+    const shadowId = background.backdropShadow || 'none'
+    const shadowDef = SHADOWS.find(s => s.id === shadowId)
+    if (shadowId !== 'none' && shadowDef) {
+         const s = new Image()
+         s.crossOrigin = 'anonymous'
+         s.src = shadowDef.url
+         await new Promise((resolve) => { s.onload = resolve; s.onerror = resolve })
+         if (s.complete && s.naturalWidth > 0) shadowImg = s
     }
 
     drawProfileImage({
@@ -138,6 +169,7 @@ export function EditorPreview({
         image: img,
         backgroundImage: bgImg,
         decalImage: decalImg,
+        shadowImage: shadowImg,
         shape,
         background,
         gradient,

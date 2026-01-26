@@ -12,6 +12,8 @@ export interface BackgroundPreset {
   decal?: string
   decalOpacity?: number
   decalColor?: string
+  backdropShadow?: string
+  backdropShadowOpacity?: number
 }
 
 export interface ImageFilterState {

@@ -5,6 +5,7 @@ interface DrawOptions {
   image: HTMLImageElement
   backgroundImage?: HTMLImageElement
   decalImage?: HTMLImageElement
+  shadowImage?: HTMLImageElement
   shape: ShapeType
   background: BackgroundPreset
   gradient: GradientState
@@ -63,6 +64,7 @@ export const drawProfileImage = ({
   image,
   backgroundImage,
   decalImage,
+  shadowImage,
   shape,
   background,
   gradient,
@@ -183,11 +185,13 @@ export const drawProfileImage = ({
     if (background.value !== 'transparent') {
       if (background.type === 'image' && backgroundImage) {
           // Draw custom background image
-          // Cover mode
-          const scale = Math.max(size / backgroundImage.width, size / backgroundImage.height)
-          const x = (size / 2) - (backgroundImage.width / 2) * scale
-          const y = (size / 2) - (backgroundImage.height / 2) * scale
-          ctx.drawImage(backgroundImage, x, y, backgroundImage.width * scale, backgroundImage.height * scale)
+          if (backgroundImage.complete && backgroundImage.naturalWidth > 0) {
+              // Cover mode
+              const scale = Math.max(size / backgroundImage.width, size / backgroundImage.height)
+              const x = (size / 2) - (backgroundImage.width / 2) * scale
+              const y = (size / 2) - (backgroundImage.height / 2) * scale
+              ctx.drawImage(backgroundImage, x, y, backgroundImage.width * scale, backgroundImage.height * scale)
+          }
       } else if (background.type === 'gradient') {
           if (background.id.startsWith('grad')) {
               // Simple extraction for presets
@@ -203,10 +207,11 @@ export const drawProfileImage = ({
           } else {
               ctx.fillStyle = background.value
           }
+          ctx.fillRect(0, 0, size, size)
       } else {
            ctx.fillStyle = background.value
+           ctx.fillRect(0, 0, size, size)
       }
-      ctx.fillRect(0, 0, size, size)
     }
   }
 
@@ -299,17 +304,29 @@ export const drawProfileImage = ({
 
   // 3c. Decal Overlay
   if (background.decal && background.decal !== 'none' && decalImage) {
-      ctx.save()
-      ctx.globalAlpha = background.decalOpacity || 1.0
-      
-      if (background.decalColor) {
-           const tinted = createTintedImage(decalImage, background.decalColor, size, size)
-           ctx.drawImage(tinted, 0, 0, size, size)
-      } else {
-           ctx.drawImage(decalImage, 0, 0, size, size)
+      if (decalImage.complete && decalImage.naturalWidth > 0) {
+        ctx.save()
+        ctx.globalAlpha = background.decalOpacity || 1.0
+        
+        if (background.decalColor) {
+             const tinted = createTintedImage(decalImage, background.decalColor, size, size)
+             ctx.drawImage(tinted, 0, 0, size, size)
+        } else {
+             ctx.drawImage(decalImage, 0, 0, size, size)
+        }
+        
+        ctx.restore()
       }
-      
-      ctx.restore()
+  }
+
+  // 3d. Shadow Overlay (Image based)
+  if (background.backdropShadow && background.backdropShadow !== 'none' && shadowImage) {
+      if (shadowImage.complete && shadowImage.naturalWidth > 0) {
+        ctx.save()
+        ctx.globalAlpha = background.backdropShadowOpacity || 1.0
+        ctx.drawImage(shadowImage, 0, 0, size, size)
+        ctx.restore()
+      }
   }
 
   // 4. Draw Image (Subject)
@@ -373,7 +390,9 @@ export const drawProfileImage = ({
       ctx.filter = filterString
   }
 
-  ctx.drawImage(image, drawX, drawY, drawWidth, drawHeight)
+  if (image.complete && image.naturalWidth > 0) {
+    ctx.drawImage(image, drawX, drawY, drawWidth, drawHeight)
+  }
   ctx.restore()
 
   ctx.restore() // End Clip

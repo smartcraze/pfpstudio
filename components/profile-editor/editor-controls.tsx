@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { BackgroundPreset, OutlineState, GradientState, ImageFilterState, ShapeType } from './types'
 import { Move, Palette, Box, Layers, Image as ImageIcon, Sparkles, Wand2, Circle, Square, AppWindow, Check, X } from 'lucide-react'
 import { Switch } from '../ui/switch'
-import { PRESET_BACKGROUNDS, DECALS } from './constants'
+import { PRESET_BACKGROUNDS, DECALS, IMAGE_BACKGROUNDS, SHADOWS } from './constants'
 import { cn } from '@/lib/utils'
 
 interface EditorControlsProps {
@@ -142,7 +142,7 @@ export function EditorControls({
                              <Sparkles className="w-4 h-4 text-purple-500" /> Subject Outline
                          </Label>
                          <div className="flex items-center gap-2">
-                            <div className="relative w-6 h-6 rounded-full overflow-hidden border border-input shadow-sm">
+                            <div className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-input shadow-md ring-offset-background transition-all hover:scale-110">
                                 <input type="color" value={outline.color} onChange={(e) => setOutline({...outline, color: e.target.value})} className="absolute inset-0 w-[150%] h-[150%] -translate-x-1/4 -translate-y-1/4 p-0 cursor-pointer border-0" />
                             </div>
                          </div>
@@ -157,7 +157,7 @@ export function EditorControls({
                              <Box className="w-4 h-4" /> Border
                          </Label>
                          <div className="flex items-center gap-2">
-                            <div className="relative w-6 h-6 rounded-full overflow-hidden border border-input shadow-sm">
+                            <div className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-input shadow-md ring-offset-background transition-all hover:scale-110">
                                 <input type="color" value={borderColor} onChange={(e) => setBorderColor(e.target.value)} className="absolute inset-0 w-[150%] h-[150%] -translate-x-1/4 -translate-y-1/4 p-0 cursor-pointer border-0" />
                             </div>
                          </div>
@@ -245,6 +245,26 @@ export function EditorControls({
                              </div>
                         </div>
                     )}
+                </div>
+
+                {/* 5a. Backdrop Images */}
+                <div className="space-y-4 pt-4 border-t">
+                     <Label className="font-semibold">Abstract Backdrops</Label>
+                     <div className="grid grid-cols-4 gap-2">
+                        {IMAGE_BACKGROUNDS.map((bg) => (
+                            <button
+                                key={bg.id}
+                                onClick={() => setBackground(bg)}
+                                className={cn(
+                                    "aspect-square rounded-lg border overflow-hidden relative transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary",
+                                    background.id === bg.id && "ring-2 ring-primary ring-offset-1"
+                                )}
+                                title={bg.name}
+                            >
+                                <img src={bg.value} className="w-full h-full object-cover" alt={bg.name} />
+                            </button>
+                        ))}
+                     </div>
                 </div>
 
                 {/* 5. Texture Overlay */}
@@ -349,6 +369,36 @@ export function EditorControls({
                                 <div className="flex justify-between text-xs"><span>Decal Alpha</span><span>{Math.round((background.decalOpacity || 0.5) * 100)}%</span></div>
                                 <Slider value={[(background.decalOpacity || 0.5) * 100]} onValueChange={([v]) => setBackground({...background, decalOpacity: v/100})} min={0} max={100} step={1} />
                             </div>
+                        </div>
+                     )}
+                </div>
+
+                {/* 7. Shadow Overlay */}
+                <div className="space-y-4 pt-4 border-t">
+                     <Label className="font-semibold">Shadow Effect</Label>
+                     <div className="grid grid-cols-5 gap-2">
+                        {SHADOWS.map((s) => (
+                            <button
+                                key={s.id}
+                                onClick={() => setBackground({...background, backdropShadow: s.id, backdropShadowOpacity: background.backdropShadowOpacity || 0.6 })}
+                                className={cn(
+                                    "aspect-square rounded border flex items-center justify-center text-[10px] font-medium transition-all relative overflow-hidden bg-white/50",
+                                    (background.backdropShadow || 'none') === s.id ? "border-primary bg-primary/5 text-primary ring-1 ring-primary" : "text-muted-foreground hover:bg-muted"
+                                )}
+                                title={s.name}
+                            >
+                                {s.id === 'none' ? (
+                                    <Box className="w-4 h-4" />
+                                ) : (
+                                    <img src={s.url} alt={s.name} className="w-full h-full object-contain p-2 opacity-80" />
+                                )}
+                            </button>
+                        ))}
+                     </div>
+                     {(background.backdropShadow && background.backdropShadow !== 'none') && (
+                        <div className="space-y-3 animate-in fade-in pt-2">
+                            <div className="flex justify-between text-xs"><span>Shadow Intensity</span><span>{Math.round((background.backdropShadowOpacity || 0.6) * 100)}%</span></div>
+                            <Slider value={[(background.backdropShadowOpacity || 0.6) * 100]} onValueChange={([v]) => setBackground({...background, backdropShadowOpacity: v/100})} min={0} max={100} step={1} />
                         </div>
                      )}
                 </div>
