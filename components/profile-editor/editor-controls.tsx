@@ -4,7 +4,6 @@ import { Slider } from '@/components/ui/slider'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Input } from '@/components/ui/input'
 import { BackgroundPreset } from './types'
 import { Move, Palette, Box } from 'lucide-react'
 
