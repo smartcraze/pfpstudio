@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { BackgroundPreset, OutlineState, GradientState, ImageFilterState, ShapeType } from './types'
 import { Move, Palette, Box, Layers, Image as ImageIcon, Sparkles, Wand2, Circle, Square, AppWindow, Check } from 'lucide-react'
 import { Switch } from '../ui/switch'
-import { DECALS } from './constants'
+import { PRESET_BACKGROUNDS, DECALS } from './constants'
 import { cn } from '@/lib/utils'
 
 interface EditorControlsProps {
@@ -184,6 +184,23 @@ export function EditorControls({
                         {gradient.enabled && <Label className="text-xs text-muted-foreground">Angle: {gradient.angle}°</Label>}
                     </div>
                     
+                    {/* Preset Grid - Re-added */}
+                    <div className="grid grid-cols-8 gap-2">
+                        {PRESET_BACKGROUNDS.map((bg) => (
+                            <button
+                                key={bg.id}
+                                onClick={() => setBackground(bg)}
+                                className={cn(
+                                    "w-full aspect-square rounded-full border shadow-sm transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+                                    background.id === bg.id && "ring-2 ring-primary ring-offset-2 scale-110",
+                                    bg.id === 'transparent' && "bg-[url('https://checkerboard.link/checkerboard.svg')] bg-cover"
+                                )}
+                                style={{ background: bg.id !== 'transparent' ? bg.value : undefined }}
+                                title={bg.name}
+                            />
+                        ))}
+                    </div>
+
                     {/* Custom Gradient Controls */}
                     {background.id.startsWith('grad') || gradient.enabled ? (
                         <div className="space-y-3 p-3 bg-muted/30 rounded-lg border">
