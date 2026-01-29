@@ -110,7 +110,7 @@ export function Navbar() {
                         ) : (
                             <>
                                 <NavbarButton onClick={() => signIn('google')} variant="primary" >
-                                    <div className="flex items-center gap-2 ">
+                                    <div className="flex items-center gap-2 shadow-lg border border-gray-200 hover:bg-gray-100">
                                         <GoogleLogo />
                                         <span>Login with Google</span>
                                     </div>

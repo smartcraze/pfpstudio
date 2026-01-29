@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import Link from 'next/link'
 import { HeroScrollDemo } from '@/components/HeroScroll'
 import { TextHoverEffectDemo } from '@/components/TextHover'
 import { IconWand, IconDownload, IconPalette, IconShare, IconCloudUpload } from '@tabler/icons-react'
@@ -35,25 +36,7 @@ export default function HomePage() {
         <main className="min-h-screen bg-background text-foreground flex flex-col overflow-x-hidden selection:bg-primary/20 relative">
 
             {/* Overlays for processing and cropping */}
-            <AnimatePresence>
-                {isProcessing && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[60] bg-background flex flex-col items-center justify-center"
-                    >
-                        <div className="absolute inset-0 bg-white dark:bg-black/[0.96] antialiased z-[-1]">
-                            <div className={cn(
-                                "pointer-events-none absolute inset-0 [background-size:40px_40px] select-none",
-                                "[background-image:linear-gradient(to_right,#e5e5e5_1px,transparent_1px),linear-gradient(to_bottom,#e5e5e5_1px,transparent_1px)]",
-                                "dark:[background-image:linear-gradient(to_right,#171717_1px,transparent_1px),linear-gradient(to_bottom,#171717_1px,transparent_1px)]"
-                            )} />
-                        </div>
-                        <ProcessingView progress={66} />
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            <ProcessingView loading={isProcessing} />
 
             <AnimatePresence>
                 {imageToCrop && (
@@ -193,9 +176,9 @@ export default function HomePage() {
                 <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
                     <p>&copy; {new Date().getFullYear()} PfpStudio. Created for Creators.</p>
                     <div className="flex gap-6">
-                        <a href="#" className="hover:text-primary transition-colors">Terms</a>
-                        <a href="#" className="hover:text-primary transition-colors">Privacy</a>
-                        <a href="#" className="hover:text-primary transition-colors">Twitter</a>
+                        <Link href="/terms" className="hover:text-primary transition-colors">Terms</Link>
+                        <Link href="/privacy" className="hover:text-primary transition-colors">Privacy</Link>
+                        <Link href="/contact" className="hover:text-primary transition-colors">Contact</Link>
                     </div>
                 </div>
             </footer>
