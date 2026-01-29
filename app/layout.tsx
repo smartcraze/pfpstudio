@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ProfileProvider } from "@/lib/profile-context";
+import { Providers } from "@/components/providers";
+import Script from "next/script";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,7 +23,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://pfpstudio.surajv.dev"),    
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://pfpstudio.surajv.dev"),
   title: {
     default: "PfpStudio - Create Stunning Profile Pictures",
     template: "%s | PfpStudio",
@@ -68,9 +70,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ProfileProvider>
+        <Script
+          id="razorpay-checkout-js"
+          src="https://checkout.razorpay.com/v1/checkout.js"
+        />
+        <Providers>
           {children}
-        </ProfileProvider>
+          <Toaster />
+        </Providers>
       </body>
     </html>
   );

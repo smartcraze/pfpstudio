@@ -8,6 +8,7 @@ import { IconWand, IconDownload, IconPalette, IconShare, IconCloudUpload } from 
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { Spotlight } from '@/components/ui/Spotlight'
+import { PricingSection } from '@/components/pricing-section'
 
 export default function HomePage() {
     return (
@@ -127,10 +128,9 @@ export default function HomePage() {
                 </div>
             </section>
 
-            {/* Footer / Branding */}
-            <section className="py-12">
-                <TextHoverEffectDemo />
-            </section>
+            <PricingSection />
+
+
 
             <footer className=" py-8 bg-background/50 backdrop-blur-sm">
                 <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
@@ -142,6 +142,10 @@ export default function HomePage() {
                     </div>
                 </div>
             </footer>
+            {/* Footer / Branding */}
+            <section className="py-8">
+                <TextHoverEffectDemo />
+            </section>
         </main>
     )
 }
