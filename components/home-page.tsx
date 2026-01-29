@@ -1,19 +1,76 @@
 'use client'
 
-import React from 'react'
-import { Navbar } from '@/components/Navbar'
+import React, { useState } from 'react'
 import { HeroScrollDemo } from '@/components/HeroScroll'
 import { TextHoverEffectDemo } from '@/components/TextHover'
 import { IconWand, IconDownload, IconPalette, IconShare, IconCloudUpload } from '@tabler/icons-react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { Spotlight } from '@/components/ui/Spotlight'
 import { PricingSection } from '@/components/pricing-section'
+import { useProfile } from '@/lib/profile-context'
+import { CropView } from '@/components/profile-editor/crop-view'
+import { ProcessingView } from '@/components/profile-editor/processing-view'
 
 export default function HomePage() {
+    const { processImage, isProcessing } = useProfile()
+    const [imageToCrop, setImageToCrop] = useState<string | null>(null)
+
+    const handleFileSelect = (file: File) => {
+        const reader = new FileReader()
+        reader.onload = (e) => {
+            if (reader.result) {
+                setImageToCrop(reader.result.toString())
+            }
+        }
+        reader.readAsDataURL(file)
+    }
+
+    const handleCropComplete = (croppedFile: File) => {
+        setImageToCrop(null)
+        processImage(croppedFile)
+    }
+
     return (
-        <main className="min-h-screen bg-background text-foreground flex flex-col overflow-x-hidden selection:bg-primary/20">
-            <Navbar />
+        <main className="min-h-screen bg-background text-foreground flex flex-col overflow-x-hidden selection:bg-primary/20 relative">
+
+            {/* Overlays for processing and cropping */}
+            <AnimatePresence>
+                {isProcessing && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[60] bg-background flex flex-col items-center justify-center"
+                    >
+                        <div className="absolute inset-0 bg-white dark:bg-black/[0.96] antialiased z-[-1]">
+                            <div className={cn(
+                                "pointer-events-none absolute inset-0 [background-size:40px_40px] select-none",
+                                "[background-image:linear-gradient(to_right,#e5e5e5_1px,transparent_1px),linear-gradient(to_bottom,#e5e5e5_1px,transparent_1px)]",
+                                "dark:[background-image:linear-gradient(to_right,#171717_1px,transparent_1px),linear-gradient(to_bottom,#171717_1px,transparent_1px)]"
+                            )} />
+                        </div>
+                        <ProcessingView progress={66} />
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+                {imageToCrop && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="fixed inset-0 z-[60] bg-background/95 backdrop-blur-md flex flex-col items-center justify-center p-4"
+                    >
+                        <CropView
+                            imageSrc={imageToCrop}
+                            onCancel={() => setImageToCrop(null)}
+                            onCropComplete={handleCropComplete}
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <div className="fixed inset-0 z-[-1] bg-white dark:bg-black/[0.96] antialiased">
                 <div className={cn(
@@ -36,7 +93,7 @@ export default function HomePage() {
                     className="-top-40 -left-0 md:-top-20 md:left-60"
                     fill="currentColor"
                 />
-                <HeroScrollDemo />
+                <HeroScrollDemo onFileSelect={handleFileSelect} />
             </div>
 
 

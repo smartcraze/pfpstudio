@@ -33,27 +33,59 @@ const PLANS: PricingPlan[] = Object.values(PRICING_PLANS).map(plan => ({
 
 export function PricingSection() {
     const { buyCredits, loading } = usePayment();
-    const [coupon, setCoupon] = useState('WELCOME50');
+    const [couponInput, setCouponInput] = useState('');
+    const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
+    const [isValidating, setIsValidating] = useState(false);
+    const [validationError, setValidationError] = useState<string | null>(null);
 
     const activeCoupon = useMemo(() => {
-        if (!coupon || !COUPONS[coupon as keyof typeof COUPONS]) return null;
-        return COUPONS[coupon as keyof typeof COUPONS];
-    }, [coupon]);
+        if (!appliedCoupon || !COUPONS[appliedCoupon as keyof typeof COUPONS]) return null;
+        return COUPONS[appliedCoupon as keyof typeof COUPONS];
+    }, [appliedCoupon]);
 
-    useEffect(() => {
-        if (activeCoupon) {
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 }
+    const handleApplyCoupon = async () => {
+        if (!couponInput.trim()) return;
+        setIsValidating(true);
+        setValidationError(null);
+
+        try {
+            const res = await fetch('/api/user/validate-coupon', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ couponCode: couponInput.trim() }),
             });
-            toast.success("Coupon Applied!", {
-                description: `${activeCoupon.value}% discount has been activated.`,
-                icon: <TicketPercent className="w-4 h-4" />,
-                duration: 4000
-            });
+
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                setAppliedCoupon(couponInput.trim().toUpperCase());
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+                toast.success("Coupon Applied!", {
+                    description: `${data.discount}% discount has been activated.`,
+                    icon: <TicketPercent className="w-4 h-4" />,
+                });
+            } else {
+                setValidationError(data.error || "Invalid coupon");
+                toast.error(data.error || "Failed to apply coupon");
+                setAppliedCoupon(null);
+            }
+        } catch (err) {
+            setValidationError("Something went wrong");
+            toast.error("Failed to validate coupon");
+        } finally {
+            setIsValidating(false);
         }
-    }, [activeCoupon]);
+    };
+
+    const handleRemoveCoupon = () => {
+        setAppliedCoupon(null);
+        setCouponInput('');
+        setValidationError(null);
+    };
 
     return (
         <section id="pricing" className="py-24 relative overflow-hidden w-full">
@@ -103,7 +135,7 @@ export function PricingSection() {
                                     </div>
                                     <div className="text-left">
                                         <p className="font-bold text-sm text-primary flex items-center gap-1">
-                                            {coupon}
+                                            {appliedCoupon}
                                             <Check className="h-3 w-3" />
                                         </p>
                                         <p className="text-xs text-muted-foreground">{activeCoupon.value}% Savings Applied</p>
@@ -112,21 +144,35 @@ export function PricingSection() {
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    onClick={() => setCoupon('')}
+                                    onClick={handleRemoveCoupon}
                                     className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 relative z-10"
                                 >
                                     <X className="h-4 w-4" />
                                 </Button>
                             </motion.div>
                         ) : (
-                            <div className="relative w-full">
-                                <Tag className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <Input
-                                    placeholder="Have a coupon code?"
-                                    value={coupon}
-                                    onChange={(e) => setCoupon(e.target.value.trim().toUpperCase())}
-                                    className="pl-9 bg-background border-input focus-visible:ring-primary/20"
-                                />
+                            <div className="w-full space-y-2">
+                                <div className="flex gap-2 relative w-full">
+                                    <div className="relative flex-1">
+                                        <Tag className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                        <Input
+                                            placeholder="Coupon code"
+                                            value={couponInput}
+                                            onChange={(e) => setCouponInput(e.target.value)}
+                                            onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon()}
+                                            className={`pl-9 bg-background border-input focus-visible:ring-primary/20 ${validationError ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                                        />
+                                    </div>
+                                    <Button onClick={handleApplyCoupon} disabled={isValidating || !couponInput.trim()} variant="secondary">
+                                        {isValidating ? <Loader2 className="w-4 h-4 animate-spin" /> : "Apply"}
+                                    </Button>
+                                </div>
+                                {validationError && (
+                                    <p className="text-xs text-destructive text-center font-medium animate-in fade-in slide-in-from-top-1">{validationError}</p>
+                                )}
+                                <div className="text-center">
+                                    <p className="text-xs text-muted-foreground">Available: <span className="font-mono font-medium text-foreground bg-secondary px-1 py-0.5 rounded cursor-pointer hover:bg-secondary/80" onClick={() => setCouponInput('WELCOME50')}>WELCOME50</span></p>
+                                </div>
                             </div>
                         )}
                     </motion.div>
@@ -147,12 +193,12 @@ export function PricingSection() {
                                         <div className="absolute top-0 right-0 bg-primary px-3 py-1 rounded-bl-xl text-xs font-bold text-primary-foreground">
                                             POPULAR
                                         </div>
-                                        <PlanContent plan={plan} buyCredits={buyCredits} loading={loading} couponCode={coupon} />
+                                        <PlanContent plan={plan} buyCredits={buyCredits} loading={loading} couponCode={appliedCoupon || ''} />
                                     </div>
                                 </BackgroundGradient>
                             ) : (
                                 <div className="h-full rounded-[22px] p-6 sm:p-8 bg-card border border-border flex flex-col hover:border-primary/50 hover:shadow-lg transition-all duration-300">
-                                    <PlanContent plan={plan} buyCredits={buyCredits} loading={loading} couponCode={coupon} />
+                                    <PlanContent plan={plan} buyCredits={buyCredits} loading={loading} couponCode={appliedCoupon || ''} />
                                 </div>
                             )}
                         </motion.div>

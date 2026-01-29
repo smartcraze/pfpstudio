@@ -11,7 +11,9 @@ interface ProfileContextType {
   processedImage: string | null
   setProcessedImage: (url: string | null) => void
   isProcessing: boolean
+  isRestoring: boolean
   processImage: (file: File) => Promise<void>
+  saveEditorState: () => void
 
   // Editor State
   shape: ShapeType
@@ -45,26 +47,9 @@ const ProfileContext = createContext<ProfileContextType | undefined>(undefined)
 
 export function ProfileProvider({ children }: { children: ReactNode }) {
   const router = useRouter()
-
   // Global State
   const [processedImage, setProcessedImageState] = useState<string | null>(null)
-
-  // Persistence Wrapper for Processed Image
-  const setProcessedImage = (url: string | null) => {
-    setProcessedImageState(url)
-    if (url) {
-      localStorage.setItem('pfp_processed_image', url)
-    } else {
-      localStorage.removeItem('pfp_processed_image')
-    }
-  }
-
-  // Restore State on Mount
-  React.useEffect(() => {
-    const savedImage = localStorage.getItem('pfp_processed_image')
-    if (savedImage) setProcessedImageState(savedImage)
-  }, [])
-
+  const [isRestoring, setIsRestoring] = useState(true)
   const [isProcessing, setIsProcessing] = useState(false)
 
   // Editor State
@@ -88,6 +73,75 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   const [outline, setOutline] = useState<OutlineState>(DEFAULT_OUTLINE)
   const [gradient, setGradient] = useState<GradientState>(DEFAULT_GRADIENT)
   const [noiseTexture, setNoiseTexture] = useState(false)
+
+  // Persistence Wrapper for Processed Image
+  const setProcessedImage = (url: string | null) => {
+    setProcessedImageState(url)
+    if (url) {
+      localStorage.setItem('pfp_processed_image', url)
+    } else {
+      localStorage.removeItem('pfp_processed_image')
+      localStorage.removeItem('pfp_editor_state') // Clear all state if image is removed
+    }
+  }
+
+  // Save all editor state to local storage
+  const saveEditorState = () => {
+    const state = {
+      shape,
+      selectedBg,
+      zoom,
+      rotation,
+      positionX,
+      positionY,
+      exportSize,
+      borderColor,
+      borderWidth,
+      shadowIntensity,
+      filters,
+      outline,
+      gradient,
+      noiseTexture
+    }
+    localStorage.setItem('pfp_editor_state', JSON.stringify(state));
+    // Also ensure image is saved
+    if (processedImage) {
+      localStorage.setItem('pfp_processed_image', processedImage)
+    }
+  }
+
+  // Restore State on Mount
+  React.useEffect(() => {
+    const savedImage = localStorage.getItem('pfp_processed_image')
+    const savedStateStr = localStorage.getItem('pfp_editor_state')
+
+    if (savedImage) setProcessedImageState(savedImage)
+
+    if (savedStateStr) {
+      try {
+        const state = JSON.parse(savedStateStr);
+        if (state.shape) setShape(state.shape)
+        if (state.selectedBg) setSelectedBg(state.selectedBg)
+        if (state.zoom) setZoom(state.zoom)
+        if (state.rotation) setRotation(state.rotation)
+        if (state.positionX) setPositionX(state.positionX)
+        if (state.positionY) setPositionY(state.positionY)
+        if (state.exportSize) setExportSize(state.exportSize)
+        if (state.borderColor) setBorderColor(state.borderColor)
+        if (state.borderWidth) setBorderWidth(state.borderWidth)
+        if (state.shadowIntensity) setShadowIntensity(state.shadowIntensity)
+        if (state.filters) setFilters(state.filters)
+        if (state.outline) setOutline(state.outline)
+        if (state.gradient) setGradient(state.gradient)
+        if (state.noiseTexture !== undefined) setNoiseTexture(state.noiseTexture)
+      } catch (e) {
+        console.error("Failed to restore editor state", e)
+      }
+    }
+
+    setIsRestoring(false);
+  }, [])
+
 
   const processImage = async (file: File) => {
     setIsProcessing(true)
@@ -180,7 +234,9 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     outline, setOutline,
     gradient, setGradient,
     noiseTexture, setNoiseTexture,
-    resetEditor
+    resetEditor,
+    saveEditorState,
+    isRestoring
   }
 
   return (

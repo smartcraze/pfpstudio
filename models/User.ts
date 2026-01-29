@@ -6,6 +6,7 @@ const userSchema = new Schema({
   image: String,
   emailVerified: Date,
   credits: { type: Number, default: 3 }, // Free credits
+  usedCoupons: { type: [String], default: [] }
 }, { timestamps: true });
 
 export const User = mongoose.models.User || mongoose.model("User", userSchema);

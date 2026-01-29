@@ -4,6 +4,7 @@ import { Download, LogIn } from 'lucide-react'
 import { useSession, signIn } from 'next-auth/react'
 import { toast } from 'sonner'
 import { usePayment } from '@/hooks/use-payment'
+import { useProfile } from '@/lib/profile-context'
 import { BackgroundPreset, ShapeType, ImageFilterState, OutlineState, GradientState } from './types'
 import {
   Dialog,
@@ -54,6 +55,7 @@ export function EditorPreview({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const { data: session, update } = useSession()
   const { buyCredits } = usePayment()
+  const { saveEditorState } = useProfile()
   const [showLoginModal, setShowLoginModal] = useState(false)
 
   useEffect(() => {
@@ -265,7 +267,10 @@ export function EditorPreview({
           <div className="flex flex-col gap-4 py-4">
             <Button
               variant="outline"
-              onClick={() => signIn('google', { callbackUrl: window.location.href })}
+              onClick={() => {
+                saveEditorState();
+                signIn('google', { callbackUrl: window.location.href });
+              }}
               className="w-full flex items-center gap-2 h-12 text-base"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">

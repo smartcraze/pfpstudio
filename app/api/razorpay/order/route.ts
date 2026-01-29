@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
-import { getPlan, calculateDiscountedAmount } from "@/lib/payment-config";
+import { getPlan, calculateDiscountedAmount, COUPONS } from "@/lib/payment-config";
+import dbConnect from "@/lib/db";
+import { User } from "@/models/User";
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID!,
@@ -12,12 +14,27 @@ const razorpay = new Razorpay({
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session) {
+    if (!session || !session.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { planId, couponCode } = await req.json();
     const plan = getPlan(planId);
+    
+    // Backend Coupon Validation
+    if (couponCode) {
+        const code = couponCode.toUpperCase();
+        if (!COUPONS[code as keyof typeof COUPONS]) {
+            return NextResponse.json({ error: "Invalid coupon code" }, { status: 400 });
+        }
+        
+        await dbConnect();
+        // @ts-ignore
+        const user = await User.findById(session.user.id);
+        if (user.usedCoupons && user.usedCoupons.includes(code)) {
+             return NextResponse.json({ error: "Coupon already used" }, { status: 400 });
+        }
+    }
     
     // Calculate final amount centrally
     const finalAmount = calculateDiscountedAmount(plan.amount, couponCode);

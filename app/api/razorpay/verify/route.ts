@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import dbConnect from "@/lib/db";
 import { User } from "@/models/User";
+import { Transaction } from "@/models/Transaction";
 import { getServerSession } from "next-auth";
 import Razorpay from "razorpay";
 import { authOptions } from "../../auth/[...nextauth]/route";
@@ -36,19 +37,44 @@ export async function POST(req: Request) {
       const order = await razorpay.orders.fetch(razorpay_order_id);
       // @ts-ignore
       const creditsToAdd = Number(order.notes?.credits || 10);
+      // @ts-ignore
+      const couponCode = order.notes?.couponApplied;
+      const amount = (Number(order.amount) || 0) / 100; // Convert paise to currency
       
+      const updateData: any = {
+         $inc: { credits: creditsToAdd }
+      };
+      
+      if (couponCode && couponCode !== 'none') {
+         updateData.$addToSet = { usedCoupons: couponCode };
+      }
+
       const updatedUser = await User.findOneAndUpdate(
          // @ts-ignore
         { _id: session.user.id }, 
-         { $inc: { credits: creditsToAdd } },
+        updateData,
          { new: true }
       );
+
+      // Record Transaction
+      await Transaction.create({
+          // @ts-ignore
+          userId: session.user.id,
+          amount: amount,
+          credits: creditsToAdd,
+          paymentId: razorpay_payment_id,
+          orderId: razorpay_order_id,
+          status: "success"
+      });
 
       return NextResponse.json({ 
         success: true, 
         credits: updatedUser.credits 
       });
     } else {
+      // Record Failed Transaction (Optional, but good practice if we had the order details earlier)
+      // Since we fail signature check, we might not want to trust the input enough to DB log, or we log it as failed attempt.
+      // For now, only logging success as requested ("List all payments done").
       return NextResponse.json({ success: false, error: "Invalid Signature" }, { status: 400 });
     }
   } catch (error) {

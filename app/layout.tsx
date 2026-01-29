@@ -4,6 +4,8 @@ import "./globals.css";
 import { Providers } from "@/components/providers";
 import Script from "next/script";
 import { Toaster } from "sonner";
+import { Navbar } from "@/components/Navbar";
+import { GlobalBreadcrumbs } from "@/components/global-breadcrumbs";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -75,6 +77,8 @@ export default function RootLayout({
           src="https://checkout.razorpay.com/v1/checkout.js"
         />
         <Providers>
+          <Navbar />
+          <GlobalBreadcrumbs />
           {children}
           <Toaster />
         </Providers>

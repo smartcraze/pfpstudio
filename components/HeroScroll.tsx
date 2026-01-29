@@ -1,12 +1,16 @@
 "use client";
-import React from "react";
 import { ContainerScroll } from "./ui/container-scroll-animation";
-import Link from 'next/link';
-import { Button } from "./ui/button";
 import Image from "next/image";
-import { NoiseBackground } from "./ui/noise-background";
 
-export function HeroScrollDemo() {
+import { FileUpload } from "@/components/ui/file-upload";
+
+export function HeroScrollDemo({ onFileSelect }: { onFileSelect?: (file: File) => void }) {
+  const handleFileUpload = (files: File[]) => {
+    if (files.length > 0 && onFileSelect) {
+      onFileSelect(files[0]);
+    }
+  };
+
   const TitleComponent = (
     <>
       <h1 className="text-3xl md:text-4xl font-semibold text-black dark:text-white mb-8 text-center">
@@ -15,21 +19,8 @@ export function HeroScrollDemo() {
           That Stand Out
         </span>
       </h1>
-      <div className="mb-8 text-center">
-        <Link href="/upload">
-          <NoiseBackground
-            containerClassName="w-fit p-2 rounded-full mx-auto"
-            gradientColors={[
-              "rgb(255, 100, 150)",
-              "rgb(100, 150, 255)",
-              "rgb(255, 200, 100)",
-            ]}
-          >
-            <Button className="h-full w-full cursor-pointer rounded-full bg-linear-to-r from-neutral-100 via-neutral-100 to-white px-4 py-2 text-black shadow-[0px_2px_0px_0px_var(--color-neutral-50)_inset,0px_0.5px_1px_0px_var(--color-neutral-400)] transition-all duration-100 active:scale-98 dark:from-black dark:via-black dark:to-neutral-900 dark:text-white dark:shadow-[0px_1px_0px_0px_var(--color-neutral-950)_inset,0px_1px_0px_0px_var(--color-neutral-800)]">
-              Start Creating &rarr;
-            </Button>
-          </NoiseBackground>
-        </Link>
+      <div className="w-full max-w-4xl mx-auto min-h-96 border border-dashed bg-neutral-100 dark:bg-black border-neutral-200 dark:border-neutral-800 rounded-lg mb-8">
+        <FileUpload onChange={handleFileUpload} />
       </div>
     </>
   );
