@@ -1,11 +1,13 @@
-# PfpStudio
+<img width="2838" height="1640" alt="Screenshot 2026-01-30 095806" src="https://github.com/user-attachments/assets/0f144749-241a-45da-aa9a-08bc6a05b692" /># PfpStudio
 
 ![PfpStudio Preview](public/image.png)
 
-![Uploading image.png…]()
-![Uploading image.png…]()
-![Uploading image.png…]()
-![Uploading image.png…]()
+<img width="2840" height="1636" alt="Screenshot 2026-01-30 095705" src="https://github.com/user-attachments/assets/4a647175-3135-41ac-b2b6-00f1534aadc1" />
+
+<img width="2841" height="1631" alt="Screenshot 2026-01-30 095733" src="https://github.com/user-attachments/assets/200dbc2a-501c-47ff-85fd-217388f4afc5" />
+<img width="2827" height="1638" alt="Screenshot 2026-01-30 095749" src="https://github.com/user-attachments/assets/ca74cfc4-9bcc-4d6a-855c-328e7fc8c0df" />
+<img width="2838" height="1640" alt="Screenshot 2026-01-30 095806" src="https://github.com/user-attachments/assets/8c9a1e86-61c4-4d6c-a1a1-35446525c9a5" />
+
 
 
 
