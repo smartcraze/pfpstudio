@@ -48,6 +48,7 @@ export type PlanId = keyof typeof PRICING_PLANS;
 export const COUPONS = {
   'WELCOME50': { type: 'percentage', value: 50 }, // 50% off
   'SAVE20': { type: 'percentage', value: 20 },    // 20% off
+  'OFF99': { type: 'percentage', value: 99 },
 } as const;
 
 export function getPlan(id: string) {
