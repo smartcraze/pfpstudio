@@ -78,8 +78,10 @@ export default function RootLayout({
           src="https://checkout.razorpay.com/v1/checkout.js"
         />
         <Providers>
-          <PromoBanner />
-          <Navbar />
+          <div className="fixed inset-x-0 top-0 z-50 flex flex-col">
+            <PromoBanner />
+            <Navbar />
+          </div>
           <GlobalBreadcrumbs />
           {children}
           <Toaster />
