@@ -170,8 +170,26 @@ export function PricingSection() {
                                 {validationError && (
                                     <p className="text-xs text-destructive text-center font-medium animate-in fade-in slide-in-from-top-1">{validationError}</p>
                                 )}
-                                <div className="text-center">
-                                    <p className="text-xs text-muted-foreground">Available: <span className="font-mono font-medium text-foreground bg-secondary px-1 py-0.5 rounded cursor-pointer hover:bg-secondary/80" onClick={() => setCouponInput('WELCOME50')}>WELCOME50</span></p>
+                                <div className="text-center space-y-1">
+                                    <p className="text-xs text-muted-foreground">
+                                        Available:{' '}
+                                        <span
+                                            className="font-mono font-medium text-foreground bg-secondary px-1 py-0.5 rounded cursor-pointer hover:bg-secondary/80"
+                                            onClick={() => setCouponInput('SAVE25')}
+                                        >
+                                            SAVE25
+                                        </span>
+                                        {' '}(25% off){' '}
+                                        <span className="text-muted-foreground/60">or</span>
+                                        {' '}
+                                        <span
+                                            className="font-mono font-medium text-foreground bg-secondary px-1 py-0.5 rounded cursor-pointer hover:bg-secondary/80"
+                                            onClick={() => setCouponInput('WELCOME50')}
+                                        >
+                                            WELCOME50
+                                        </span>
+                                        {' '}(50% off for new users)
+                                    </p>
                                 </div>
                             </div>
                         )}

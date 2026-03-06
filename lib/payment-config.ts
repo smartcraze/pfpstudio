@@ -2,8 +2,8 @@ export const PRICING_PLANS = {
   starter: {
     id: 'starter',
     name: 'Starter',
-    price: 49,
-    amount: 4900,
+    price: 29,
+    amount: 2900,
     credits: 10,
     features: [
       '10 High-Quality Downloads',
@@ -15,8 +15,8 @@ export const PRICING_PLANS = {
   pro: {
     id: 'pro',
     name: 'Pro',
-    price: 199,
-    amount: 19900,
+    price: 59,
+    amount: 5900,
     credits: 50,
     popular: true,
     features: [
@@ -30,8 +30,8 @@ export const PRICING_PLANS = {
   ultimate: {
     id: 'ultimate',
     name: 'Ultimate',
-    price: 399,
-    amount: 39900,
+    price: 99,
+    amount: 9900,
     credits: 120,
     features: [
       '120 High-Quality Downloads',
@@ -46,9 +46,9 @@ export const PRICING_PLANS = {
 export type PlanId = keyof typeof PRICING_PLANS;
 
 export const COUPONS = {
-  'WELCOME50': { type: 'percentage', value: 50 }, // 50% off
+  'WELCOME50': { type: 'percentage', value: 50 }, // 50% off for new users
   'SAVE20': { type: 'percentage', value: 20 },    // 20% off
-  'OFF99': { type: 'percentage', value: 99 },
+  'SAVE25': { type: 'percentage', value: 25 },    // 25% off
 } as const;
 
 export function getPlan(id: string) {
