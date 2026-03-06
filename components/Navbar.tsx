@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 import {
@@ -23,9 +23,24 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LayoutDashboard, LogOut, Coins } from "lucide-react";
+import { PromoBanner } from "@/components/PromoBanner";
+
+const BANNER_DISMISSED_KEY = "promo-banner-dismissed-v1";
 
 export function Navbar() {
     const { data: session } = useSession();
+    const [showBanner, setShowBanner] = useState(false);
+
+    useEffect(() => {
+        const dismissed = localStorage.getItem(BANNER_DISMISSED_KEY);
+        if (!dismissed) setShowBanner(true);
+    }, []);
+
+    const handleDismissBanner = () => {
+        setShowBanner(false);
+        localStorage.setItem(BANNER_DISMISSED_KEY, "true");
+    };
+
     const navItems = [
         {
             name: "Features",
@@ -67,8 +82,13 @@ export function Navbar() {
 
     return (
         <div className="relative w-full">
-            <ResizableNavbar>
-                {/* Desktop Navigation */}
+            {showBanner && (
+                <div className="fixed top-0 left-0 right-0 z-[60] w-full">
+                    <PromoBanner onDismiss={handleDismissBanner} />
+                </div>
+            )}
+            <ResizableNavbar className={showBanner ? "top-10" : "top-0"}>
+                {/* top-10 (40px) must match the banner's min-h-10 height in PromoBanner.tsx */}
                 <NavBody>
                     <CustomLogo />
                     <NavItems items={navItems} />
