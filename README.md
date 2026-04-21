@@ -1,4 +1,4 @@
-<img width="2838" height="1640" alt="Screenshot 2026-01-30 095806" src="https://github.com/user-attachments/assets/0f144749-241a-45da-aa9a-08bc6a05b692" /># PfpStudio
+<img width="2838" height="1640" alt="Screenshot 2026-01-30 095806" src="https://github.com/user-attachments/assets/0f144749-241a-45da-aa9a-08bc6a05b692" />
 
 ![PfpStudio Preview](public/image.png)
 
