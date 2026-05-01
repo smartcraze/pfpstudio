@@ -55,7 +55,7 @@ export function EditorPreview({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const { data: session, update } = useSession()
   const { buyCredits } = usePayment()
-  const { saveEditorState } = useProfile()
+  const { saveEditorState, usedOwnKey } = useProfile()
   const [showLoginModal, setShowLoginModal] = useState(false)
 
   useEffect(() => {
