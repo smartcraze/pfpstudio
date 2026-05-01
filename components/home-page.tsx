@@ -76,6 +76,22 @@ export default function HomePage() {
                     className="-top-40 -left-0 md:-top-20 md:left-60"
                     fill="currentColor"
                 />
+
+                {/* Free Marketing Callout */}
+                <div className="relative z-10 container mx-auto px-4 mt-8 flex justify-center">
+                    <Link href="/#pricing">
+                        <motion.div
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                            className="bg-primary/10 hover:bg-primary/20 transition-colors border border-primary/30 text-primary px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 cursor-pointer backdrop-blur-sm shadow-sm"
+                        >
+                            <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+                            Free forever with your own API Key! Learn more &rarr;
+                        </motion.div>
+                    </Link>
+                </div>
+
                 <HeroScrollDemo onFileSelect={handleFileSelect} />
             </div>
 

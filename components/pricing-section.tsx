@@ -196,6 +196,37 @@ export function PricingSection() {
                     </motion.div>
                 </div>
 
+                {/* Free Tier / BYOK Marketing Banner */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="max-w-4xl mx-auto mb-16"
+                >
+                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 p-8 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden">
+                        {/* decorative background element */}
+                        <div className="absolute top-0 right-0 p-12 translate-x-8 -translate-y-8 bg-primary/10 rounded-full blur-3xl -z-10" />
+                        
+                        <div className="space-y-4 max-w-xl relative z-10 text-center md:text-left">
+                            <div className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
+                                🌟 100% Free Forever
+                            </div>
+                            <h3 className="text-2xl sm:text-3xl font-bold tracking-tight">Bring Your Own API Key</h3>
+                            <p className="text-muted-foreground text-lg">
+                                Don't want to pay for credits? No problem! Configure your own <strong className="text-foreground">Remove.bg API Key</strong> in your dashboard and enjoy high-quality background removals for absolutely free.
+                            </p>
+                        </div>
+                        <div className="flex flex-col gap-3 w-full md:w-auto relative z-10 shrink-0">
+                            <Button asChild size="lg" className="w-full sm:w-auto border-2 shadow-lg hover:shadow-primary/25 transition-all">
+                                <a href="/dashboard" className="font-semibold">Configure Key Now</a>
+                            </Button>
+                            <Button asChild variant="outline" size="sm" className="w-full sm:w-auto">
+                                <a href="/docs">How to get a key?</a>
+                            </Button>
+                        </div>
+                    </div>
+                </motion.div>
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                     {PLANS.map((plan, index) => (
                         <motion.div
