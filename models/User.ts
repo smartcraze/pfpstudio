@@ -6,6 +6,7 @@ const userSchema = new Schema({
   image: String,
   emailVerified: Date,
   credits: { type: Number, default: 3 }, // Free credits
+  removeBgKey: { type: String, default: "" },
   usedCoupons: { type: [String], default: [] }
 }, { timestamps: true });
 

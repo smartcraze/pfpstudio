@@ -11,6 +11,7 @@ interface ProfileContextType {
   processedImage: string | null
   setProcessedImage: (url: string | null) => void
   isProcessing: boolean
+  usedOwnKey: boolean
   isRestoring: boolean
   processImage: (file: File) => Promise<void>
   saveEditorState: () => void
@@ -51,6 +52,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   const [processedImage, setProcessedImageState] = useState<string | null>(null)
   const [isRestoring, setIsRestoring] = useState(true)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [usedOwnKey, setUsedOwnKey] = useState(false)
 
   // Editor State
   const [shape, setShape] = useState<ShapeType>('circle')
@@ -172,7 +174,8 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
 
         if (apiResponse.ok) {
           const result = await apiResponse.json()
-          removedBgUrl = result.processedImage
+          removedBgUrl = result.processedImage;
+          setUsedOwnKey(result.usedOwnKey || false);
         } else {
           console.warn("API failed, using client-side fallback")
           removedBgUrl = await BackgroundRemovalService.removeBackground(file)
@@ -219,7 +222,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
 
   const value = {
     processedImage, setProcessedImage,
-    isProcessing, processImage,
+    isProcessing, processImage, usedOwnKey,
     shape, setShape,
     selectedBg, setSelectedBg: handleSetSelectedBg,
     zoom, setZoom,

@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
+import dbConnect from "@/lib/db";
+import { User } from "@/models/User";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]/route";
 
 async function removeBg(blob: Blob, apiKey: string) {
   const formData = new FormData();
@@ -20,6 +24,19 @@ async function removeBg(blob: Blob, apiKey: string) {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
+    
+    let userApiKey = null;
+    
+    if (session && session.user) {
+        await dbConnect();
+        // @ts-ignore
+        const user = await User.findById(session.user.id);
+        if (user && user.removeBgKey) {
+            userApiKey = user.removeBgKey;
+        }
+    }
+  
     const formData = await request.formData()
     const file = formData.get('image') as File
     
@@ -27,7 +44,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    const apiKey = process.env.REMOVE_BG_API_KEY
+    const apiKey = userApiKey || process.env.REMOVE_BG_API_KEY
     
     if (!apiKey) {
       return NextResponse.json({ 
@@ -45,6 +62,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       processedImage: dataUrl,
+      usedOwnKey: !!userApiKey,
       message: 'Background removed successfully'
     })
   } catch (error) {

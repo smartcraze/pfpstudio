@@ -145,31 +145,33 @@ export function EditorPreview({
       return
     }
 
-    if ((session.user.credits || 0) < 1) {
-      toast.error('Insufficient credits', {
-        description: 'You need 1 credit to download high-quality image.',
-        action: {
-          label: 'Buy Credits',
-          onClick: () => buyCredits()
-        }
-      })
-      return
+    if (!usedOwnKey) {
+      if ((session.user.credits || 0) < 1) {
+        toast.error('Insufficient credits', {
+          description: 'You need 1 credit to download high-quality image.',
+          action: {
+            label: 'Buy Credits',
+            onClick: () => buyCredits()
+          }
+        })
+        return
+      }
+
+      const toastId = toast.loading('Processing download...')
+
+      try {
+        const res = await fetch('/api/user/credits', { method: 'POST' })
+        if (!res.ok) throw new Error('Credit check failed')
+
+        await update({ credits: (session.user.credits || 0) - 1 })
+      } catch (error) {
+        toast.dismiss(toastId)
+        toast.error('Failed to process credit')
+        return;
+      }
     }
 
     const toastId = toast.loading('Processing download...')
-
-    try {
-      const res = await fetch('/api/user/credits', { method: 'POST' })
-      if (!res.ok) throw new Error('Credit check failed')
-
-      await update({ credits: (session.user.credits || 0) - 1 })
-    } catch (error) {
-      toast.dismiss(toastId)
-      toast.error('Failed to process credit')
-      return;
-    }
-
-    // Proceed to generate image
     const canvas = document.createElement('canvas')
     const img = new Image()
     img.crossOrigin = 'anonymous'

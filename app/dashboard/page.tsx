@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { LogoutButton } from "@/components/dashboard/logout-button";
+import { SettingsComponent } from "@/components/settings";
 import { Coins, History, User as UserIcon, CreditCard } from "lucide-react";
 import Image from "next/image";
 
@@ -111,6 +112,11 @@ export default async function DashboardPage() {
                         </p>
                     </CardContent>
                 </Card>
+            </div>
+
+            {/* API Key Settings */}
+            <div className="col-span-3">
+                <SettingsComponent />
             </div>
 
             {/* Transactions Table */}
