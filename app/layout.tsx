@@ -5,8 +5,8 @@ import { Providers } from "@/components/providers";
 import Script from "next/script";
 import { Toaster } from "sonner";
 import { Navbar } from "@/components/Navbar";
-import { GlobalBreadcrumbs } from "@/components/global-breadcrumbs";
 import { PromoBanner } from "@/components/promo-banner";
+import { PageSpacer } from "@/components/page-spacer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -82,7 +82,7 @@ export default function RootLayout({
             <PromoBanner />
             <Navbar />
           </div>
-          <GlobalBreadcrumbs />
+          <PageSpacer />
           {children}
           <Toaster />
         </Providers>

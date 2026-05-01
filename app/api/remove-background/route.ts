@@ -52,8 +52,33 @@ export async function POST(request: NextRequest) {
       }, { status: 500 })
     }
 
-    // Use the remove.bg API
-    const rbgResultData = await removeBg(file, apiKey);
+    // Attempt to use the selected API key
+    let rbgResultData;
+    let fallbackUsed = false;
+    
+    try {
+      rbgResultData = await removeBg(file, apiKey);
+    } catch (apiError: any) {
+      // If it fails and it was a user key, we fall back to the system key
+      if (userApiKey && process.env.REMOVE_BG_API_KEY) {
+        console.warn(`User key failed: ${apiError.message}. Falling back to system key.`);
+        try {
+          rbgResultData = await removeBg(file, process.env.REMOVE_BG_API_KEY);
+          fallbackUsed = true;
+          
+          // Optionally, we could delete their invalid key from DB here so they
+          // know it's broken, or just inform them on the frontend.
+          if (session && session.user) {
+            // @ts-ignore
+            await User.findByIdAndUpdate(session.user.id, { $unset: { removeBgKey: "" } });
+          }
+        } catch (fallbackError) {
+          throw new Error('Both custom and system API keys failed.');
+        }
+      } else {
+        throw apiError; // Throw original error if no fallback possible
+      }
+    }
     
     // Convert array buffer to base64 data URL
     const base64 = Buffer.from(rbgResultData).toString('base64')
@@ -62,7 +87,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       processedImage: dataUrl,
-      usedOwnKey: !!userApiKey,
+      // If we fell back, they didn't really use their own key successfully
+      usedOwnKey: !!userApiKey && !fallbackUsed, 
+      fallbackUsed,
       message: 'Background removed successfully'
     })
   } catch (error) {

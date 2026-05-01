@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 import { BackgroundPreset, ShapeType, ImageFilterState, OutlineState, GradientState } from '@/components/profile-editor/types'
 import { PRESET_BACKGROUNDS, DEFAULT_FILTERS, DEFAULT_OUTLINE, DEFAULT_GRADIENT } from '@/components/profile-editor/constants'
+import { toast } from 'sonner'
 import { BackgroundRemovalService } from './image-processing'
 import { useRouter } from 'next/navigation'
 
@@ -176,6 +177,17 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
           const result = await apiResponse.json()
           removedBgUrl = result.processedImage;
           setUsedOwnKey(result.usedOwnKey || false);
+
+          if (result.fallbackUsed) {
+            toast.warning('Your API Key failed', {
+              description: 'We switched to our system key so you can keep editing, but you will be charged credits for downloads.',
+              duration: 8000,
+            })
+          } else if (result.usedOwnKey) {
+            toast.success('API Key Working', {
+              description: 'Tip: Free accounts at Remove.bg support up to 50 free credits per month.',
+            })
+          }
         } else {
           console.warn("API failed, using client-side fallback")
           removedBgUrl = await BackgroundRemovalService.removeBackground(file)
