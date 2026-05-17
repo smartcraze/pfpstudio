@@ -46,13 +46,12 @@ export function Navbar() {
     const CustomLogo = () => (
         <Link href="/" className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1">
             <Image
-                src="/logo.png"
+                src="/pfp.png"
                 alt="PfpStudio Logo"
-                width={32}
-                height={32}
+                width={130}
+                height={130}
                 className="rounded-full"
             />
-            <span className="font-bold text-xl tracking-tight text-black dark:text-white">PFP STUDIO</span>
         </Link>
     );
 
