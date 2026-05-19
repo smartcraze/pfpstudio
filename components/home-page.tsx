@@ -12,6 +12,7 @@ import { PricingSection } from '@/components/pricing-section'
 import { useProfile } from '@/lib/profile-context'
 import { CropView } from '@/components/profile-editor/crop-view'
 import { ProcessingView } from '@/components/profile-editor/processing-view'
+import { DemoVideo } from './video-demo'
 
 export default function HomePage() {
     const { processImage, isProcessing } = useProfile()
@@ -96,6 +97,8 @@ export default function HomePage() {
             </div>
 
 
+
+
             <section className="py-24 relative overflow-hidden">
                 <div className="absolute inset-0 bg-secondary/30 transform origin-top-left -z-10 h-full w-full skew-y-3" />
 
@@ -145,6 +148,7 @@ export default function HomePage() {
                 </div>
             </section>
 
+            <DemoVideo />
             {/* Features Grid */}
             <section id="features" className="py-24">
                 <div className="container mx-auto px-4">
